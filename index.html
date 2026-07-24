@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DashLens — DoorDash Compliant Photo Generator</title>
+  <title>DashLens — AI DoorDash Compliant Photo Generator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -22,7 +22,7 @@
       --text-dim: #5C6473;
       --accent-green: #00C853;
       --accent-green-bg: rgba(0, 200, 83, 0.1);
-      --accent-amber: #FFAB00;
+      --accent-purple: #7C4DFF;
       --accent-blue: #2979FF;
       --radius-sm: 6px;
       --radius-md: 10px;
@@ -31,14 +31,10 @@
       --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
       background-color: var(--bg-dark);
       color: var(--text-main);
       min-height: 100vh;
@@ -50,7 +46,7 @@
 
     /* Header */
     header {
-      background: rgba(22, 25, 32, 0.8);
+      background: rgba(22, 25, 32, 0.85);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--panel-border);
       padding: 0.85rem 2rem;
@@ -62,12 +58,7 @@
       z-index: 100;
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
     .brand-logo {
       background: var(--dd-red);
       color: white;
@@ -76,15 +67,8 @@
       padding: 0.35rem 0.65rem;
       border-radius: var(--radius-sm);
       letter-spacing: -0.5px;
-      box-shadow: 0 2px 8px rgba(255, 48, 8, 0.3);
     }
-
-    .brand-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-    }
-
+    .brand-title { font-size: 1.15rem; font-weight: 700; }
     .brand-subtitle {
       font-size: 0.75rem;
       color: var(--text-muted);
@@ -94,11 +78,7 @@
       font-weight: 500;
     }
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
+    .header-actions { display: flex; align-items: center; gap: 0.75rem; }
 
     .btn {
       background: var(--panel-border);
@@ -115,34 +95,19 @@
       gap: 0.5rem;
       transition: var(--transition);
     }
-
-    .btn:hover {
-      background: var(--panel-hover);
+    .btn:hover { background: var(--panel-hover); color: white; border-color: #3A4252; }
+    .btn-primary { background: var(--dd-red); color: white; }
+    .btn-primary:hover { background: var(--dd-red-hover); }
+    .btn-ai {
+      background: linear-gradient(135deg, #7C4DFF, #2979FF);
       color: white;
-      border-color: #3A4252;
+      box-shadow: 0 2px 10px rgba(124, 77, 255, 0.3);
     }
+    .btn-ai:hover { opacity: 0.95; transform: translateY(-1px); }
+    .btn-secondary { background: transparent; border: 1px solid var(--panel-border); }
+    .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
 
-    .btn-primary {
-      background: var(--dd-red);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: var(--dd-red-hover);
-      box-shadow: 0 4px 14px rgba(255, 48, 8, 0.35);
-    }
-
-    .btn-secondary {
-      background: transparent;
-      border: 1px solid var(--panel-border);
-    }
-
-    .btn-sm {
-      padding: 0.35rem 0.75rem;
-      font-size: 0.8rem;
-    }
-
-    /* Main Container Layout */
+    /* Layout */
     .app-container {
       display: grid;
       grid-template-columns: 340px 1fr;
@@ -150,7 +115,6 @@
       height: calc(100vh - 61px);
     }
 
-    /* Sidebar Controls */
     .sidebar {
       background: var(--panel-bg);
       border-right: 1px solid var(--panel-border);
@@ -159,11 +123,7 @@
       overflow-y: auto;
     }
 
-    .sidebar-section {
-      padding: 1.25rem;
-      border-bottom: 1px solid var(--panel-border);
-    }
-
+    .sidebar-section { padding: 1.25rem; border-bottom: 1px solid var(--panel-border); }
     .section-title {
       font-size: 0.75rem;
       font-weight: 700;
@@ -176,7 +136,6 @@
       justify-content: space-between;
     }
 
-    /* Mode Selection Tabs */
     .mode-selector {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -200,1800 +159,422 @@
       align-items: center;
       justify-content: center;
       gap: 0.4rem;
-      transition: var(--transition);
     }
+    .mode-tab.active { background: var(--panel-bg); color: var(--text-main); }
+    .mode-tab[data-mode="food"].active { border-left: 3px solid var(--dd-red); }
+    .mode-tab[data-mode="drink"].active { border-left: 3px solid var(--accent-blue); }
 
-    .mode-tab.active {
-      background: var(--panel-bg);
-      color: var(--text-main);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-
-    .mode-tab[data-mode="food"].active {
-      border-left: 3px solid var(--dd-red);
-    }
-
-    .mode-tab[data-mode="drink"].active {
-      border-left: 3px solid var(--accent-blue);
-    }
-
-    /* Option Cards & Forms */
-    .option-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      margin-bottom: 1rem;
-    }
-
-    .option-group:last-child {
-      margin-bottom: 0;
-    }
-
-    .option-label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
-    .grid-options {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.5rem;
-    }
-
-    .grid-options-3 {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .radio-card {
-      position: relative;
-    }
-
-    .radio-card input {
-      position: absolute;
-      opacity: 0;
-      cursor: pointer;
-    }
-
+    .option-group { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1rem; }
+    .grid-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+    .radio-card { position: relative; }
+    .radio-card input { position: absolute; opacity: 0; }
     .radio-card label {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       padding: 0.65rem 0.5rem;
       background: var(--bg-dark);
       border: 1px solid var(--panel-border);
       border-radius: var(--radius-sm);
       cursor: pointer;
       font-size: 0.78rem;
-      font-weight: 500;
       color: var(--text-muted);
       text-align: center;
-      transition: var(--transition);
       gap: 0.35rem;
     }
-
     .radio-card input:checked + label {
       border-color: var(--dd-red);
       background: var(--dd-red-light);
       color: var(--text-main);
       font-weight: 600;
     }
-
     body.drink-mode .radio-card input:checked + label {
       border-color: var(--accent-blue);
       background: rgba(41, 121, 255, 0.08);
     }
 
-    .bg-preview-swatch {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
+    .bg-preview-swatch { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
 
-    /* Sliders & Controls */
-    .slider-control {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
-
-    .slider-header {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
-
-    .slider-value {
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-main);
-      font-size: 0.75rem;
-    }
-
-    input[type="range"] {
-      -webkit-appearance: none;
-      width: 100%;
-      height: 4px;
-      border-radius: 2px;
-      background: var(--panel-border);
-      outline: none;
-    }
-
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: var(--text-main);
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    input[type="range"]::-webkit-slider-thumb:hover {
-      transform: scale(1.2);
-      background: var(--dd-red);
-    }
-
-    /* Switch toggle */
-    .switch-control {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.4rem 0;
-    }
-
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 36px;
-      height: 20px;
-    }
-
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: var(--panel-border);
-      transition: .2s;
-      border-radius: 20px;
-    }
-
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 14px;
-      width: 14px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: .2s;
-      border-radius: 50%;
-    }
-
-    input:checked + .slider {
-      background-color: var(--dd-red);
-    }
-
-    body.drink-mode input:checked + .slider {
-      background-color: var(--accent-blue);
-    }
-
-    input:checked + .slider:before {
-      transform: translateX(16px);
-    }
-
-    /* Main Workspace */
-    .workspace {
-      background: var(--bg-dark);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow-y: auto;
-    }
-
-    /* Empty State Dropzone */
-    .dropzone-container {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-    }
-
+    /* Workspace */
+    .workspace { background: var(--bg-dark); display: flex; flex-direction: column; position: relative; overflow-y: auto; }
+    .dropzone-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem; }
     .dropzone {
-      width: 100%;
-      max-width: 600px;
+      width: 100%; max-width: 600px;
       border: 2px dashed var(--panel-border);
       border-radius: var(--radius-lg);
-      padding: 3.5rem 2rem;
-      text-align: center;
-      background: rgba(22, 25, 32, 0.4);
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.25rem;
+      padding: 3.5rem 2rem; text-align: center;
+      background: rgba(22, 25, 32, 0.4); cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 1.25rem;
     }
+    .dropzone:hover { border-color: var(--dd-red); background: var(--dd-red-light); }
 
-    .dropzone:hover, .dropzone.dragover {
-      border-color: var(--dd-red);
-      background: var(--dd-red-light);
-      transform: translateY(-2px);
-    }
+    .editor-view { display: none; flex-direction: column; padding: 1.5rem; gap: 1.5rem; }
+    .editor-view.active { display: flex; }
 
-    .dropzone-icon {
-      width: 64px;
-      height: 64px;
-      background: var(--panel-border);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--dd-red);
-    }
-
-    .dropzone-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-    }
-
-    .dropzone-desc {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      max-width: 380px;
-      line-height: 1.5;
-    }
-
-    /* Editor View */
-    .editor-view {
-      display: none;
-      flex-direction: column;
-      padding: 1.5rem;
-      gap: 1.5rem;
-    }
-
-    .editor-view.active {
-      display: flex;
-    }
-
-    /* Toolbar above canvas */
     .editor-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--panel-bg);
-      padding: 0.75rem 1.25rem;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--panel-border);
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--panel-bg); padding: 0.75rem 1.25rem;
+      border-radius: var(--radius-md); border: 1px solid var(--panel-border);
     }
 
-    .batch-selector {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      overflow-x: auto;
-      max-width: 60%;
-      padding-bottom: 2px;
-    }
-
-    .thumb-item {
-      width: 44px;
-      height: 44px;
-      border-radius: var(--radius-sm);
-      object-fit: cover;
-      cursor: pointer;
-      border: 2px solid transparent;
-      opacity: 0.6;
-      transition: var(--transition);
-      flex-shrink: 0;
-    }
-
-    .thumb-item:hover {
-      opacity: 0.9;
-    }
-
-    .thumb-item.active {
-      opacity: 1;
-      border-color: var(--dd-red);
-    }
-
-    body.drink-mode .thumb-item.active {
-      border-color: var(--accent-blue);
-    }
-
-    /* Preview Canvas Container */
-    .preview-stage-container {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      align-items: center;
-    }
-
-    .view-mode-toggle {
-      display: flex;
-      background: var(--panel-bg);
-      padding: 3px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--panel-border);
-    }
-
-    .view-btn {
-      padding: 0.4rem 0.8rem;
-      font-size: 0.75rem;
-      font-weight: 600;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-    .view-btn.active {
-      background: var(--panel-border);
-      color: var(--text-main);
-    }
-
-    /* 16:9 Canvas Viewport */
     .stage-wrapper {
-      position: relative;
-      width: 100%;
-      max-width: 880px;
-      aspect-ratio: 16 / 9;
-      background: #000;
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      box-shadow: var(--shadow-lg);
-      border: 1px solid var(--panel-border);
-    }
-
-    .stage-canvas {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-    }
-
-    /* Compare Split Screen */
-    .compare-container {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      display: none;
-    }
-
-    .compare-container.active {
-      display: flex;
-    }
-
-    .compare-half {
-      width: 50%;
-      height: 100%;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .compare-half img, .compare-half canvas {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .compare-divider {
-      position: absolute;
-      top: 0; bottom: 0; left: 50%;
-      width: 2px;
-      background: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-      z-index: 10;
-    }
-
-    .compare-label {
-      position: absolute;
-      top: 12px;
-      padding: 0.25rem 0.6rem;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(4px);
-      color: white;
-      font-size: 0.7rem;
-      font-weight: 700;
-      border-radius: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      z-index: 5;
-    }
-
-    .compare-half:first-child .compare-label { left: 12px; }
-    .compare-half:last-child .compare-label { right: 12px; }
-
-    /* DoorDash Safe Frame Grid Overlay */
-    .overlay-grid {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      border: 1px dashed rgba(255, 255, 255, 0.2);
-      display: none;
-    }
-
-    .overlay-grid.active {
-      display: block;
-    }
-
-    /* Target safe box 70-80% height centered */
-    .safe-zone-box {
-      position: absolute;
-      top: 12.5%;
-      bottom: 12.5%;
-      left: 15%;
-      right: 15%;
-      border: 1.5px dashed rgba(255, 48, 8, 0.6);
-      border-radius: 8px;
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-end;
-      padding: 6px;
-    }
-
-    .safe-zone-tag {
-      background: rgba(255, 48, 8, 0.85);
-      color: white;
-      font-size: 0.65rem;
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 3px;
-      text-transform: uppercase;
-    }
-
-    /* DoorDash Compliance Bar */
-    .compliance-card {
-      background: var(--panel-bg);
-      border: 1px solid var(--panel-border);
-      border-radius: var(--radius-md);
-      padding: 1.25rem;
-      max-width: 880px;
-      width: 100%;
+      position: relative; width: 100%; max-width: 880px;
+      aspect-ratio: 16 / 9; background: #000;
+      border-radius: var(--radius-md); overflow: hidden;
+      box-shadow: var(--shadow-lg); border: 1px solid var(--panel-border);
       margin: 0 auto;
     }
+    .stage-canvas { width: 100%; height: 100%; object-fit: contain; }
 
-    .compliance-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 0.85rem;
+    .safe-zone-box {
+      position: absolute; top: 12.5%; bottom: 12.5%; left: 15%; right: 15%;
+      border: 1.5px dashed rgba(255, 48, 8, 0.6); border-radius: 8px;
+      display: flex; justify-content: flex-end; padding: 6px; pointer-events: none;
     }
+    .safe-zone-tag { background: rgba(255, 48, 8, 0.85); color: white; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 3px; }
 
-    .compliance-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: var(--accent-green-bg);
-      color: var(--accent-green);
-      font-weight: 700;
-      font-size: 0.78rem;
-      padding: 0.25rem 0.6rem;
-      border-radius: 20px;
-      border: 1px solid rgba(0, 200, 83, 0.2);
-    }
-
-    .compliance-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 0.75rem;
-    }
-
-    .check-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.5rem;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      line-height: 1.4;
-    }
-
-    .check-icon {
-      color: var(--accent-green);
-      font-weight: bold;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    .prohibited-list {
-      margin-top: 0.85rem;
-      padding-top: 0.85rem;
-      border-top: 1px solid var(--panel-border);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      align-items: center;
-    }
-
-    .prohibited-title {
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-right: 0.5rem;
-    }
-
-    .prohibited-tag {
-      font-size: 0.72rem;
-      background: rgba(255, 255, 255, 0.04);
-      color: #A0AAB8;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      border: 1px solid var(--panel-border);
-      text-decoration: line-through;
-      text-decoration-color: rgba(255, 48, 8, 0.5);
-    }
-
-    /* Toast Notification */
-    .toast {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      background: var(--panel-bg);
-      border: 1px solid var(--accent-green);
-      color: var(--text-main);
-      padding: 0.85rem 1.25rem;
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-lg);
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.85rem;
-      font-weight: 600;
-      z-index: 1000;
-      transform: translateY(100px);
-      opacity: 0;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .toast.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-
-    /* Drink Dual Preview Modal */
+    /* Modals & OpenAI UI */
     .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(8px);
-      z-index: 200;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px); z-index: 200; display: none;
+      align-items: center; justify-content: center; padding: 2rem;
     }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
+    .modal-overlay.active { display: flex; }
     .modal-content {
-      background: var(--panel-bg);
-      border: 1px solid var(--panel-border);
-      border-radius: var(--radius-lg);
-      width: 100%;
-      max-width: 960px;
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-      box-shadow: var(--shadow-lg);
+      background: var(--panel-bg); border: 1px solid var(--panel-border);
+      border-radius: var(--radius-lg); width: 100%; max-width: 640px;
+      padding: 1.75rem; display: flex; flex-direction: column; gap: 1.25rem;
     }
 
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .input-field {
+      width: 100%; background: var(--bg-dark); border: 1px solid var(--panel-border);
+      padding: 0.75rem; border-radius: var(--radius-sm); color: white;
+      font-family: inherit; font-size: 0.85rem; outline: none;
+    }
+    .input-field:focus { border-color: var(--accent-purple); }
+
+    .ai-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: rgba(124, 77, 255, 0.15); color: var(--accent-purple);
+      font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.6rem;
+      border-radius: 20px; border: 1px solid rgba(124, 77, 255, 0.3);
     }
 
-    .modal-title {
-      font-size: 1.1rem;
-      font-weight: 700;
+    .loader-spinner {
+      width: 24px; height: 24px; border: 3px solid rgba(255,255,255,0.2);
+      border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite;
     }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
 
-    .dual-preview-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.25rem;
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem; background: var(--panel-bg);
+      border: 1px solid var(--accent-green); color: var(--text-main);
+      padding: 0.85rem 1.25rem; border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 0.75rem;
+      font-size: 0.85rem; font-weight: 600; z-index: 1000;
+      transform: translateY(100px); opacity: 0; transition: all 0.3s;
     }
-
-    .preview-card {
-      background: var(--bg-dark);
-      border: 2px solid var(--panel-border);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .preview-card:hover, .preview-card.selected {
-      border-color: var(--accent-blue);
-      transform: translateY(-2px);
-    }
-
-    .preview-card-img {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
-      background: #000;
-    }
-
-    .preview-card-info {
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
-
-    .preview-card-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .preview-card-desc {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      line-height: 1.4;
-    }
-
-    /* Modal Backdrop Spinner */
-    .loader {
-      border: 3px solid var(--panel-border);
-      border-top: 3px solid var(--dd-red);
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Mobile adjustments */
-    @media (max-width: 900px) {
-      .app-container {
-        grid-template-columns: 1fr;
-        height: auto;
-      }
-      .sidebar {
-        border-right: none;
-        border-bottom: 1px solid var(--panel-border);
-      }
-      .dual-preview-grid {
-        grid-template-columns: 1fr;
-      }
-    }
+    .toast.show { transform: translateY(0); opacity: 1; }
   </style>
 </head>
 <body class="food-mode">
 
-  <!-- Header -->
   <header>
     <div class="brand">
       <div class="brand-logo">DashLens</div>
       <div class="brand-title">DoorDash Menu Studio</div>
-      <span class="brand-subtitle">v2.4 Compliance-Ready</span>
+      <span class="brand-subtitle">AI-Enhanced</span>
     </div>
     <div class="header-actions">
-      <button class="btn btn-secondary btn-sm" id="btn-new-upload">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        New Upload
+      <button class="btn btn-ai" id="btn-open-ai-modal">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        ChatGPT AI Enhancer
       </button>
-      <button class="btn btn-primary" id="btn-export-all">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Export 16:9 Photos
-      </button>
+      <button class="btn btn-secondary btn-sm" id="btn-new-upload">New Upload</button>
+      <button class="btn btn-primary" id="btn-export">Export 16:9 Photo</button>
     </div>
   </header>
 
-  <!-- App Main Layout -->
   <div class="app-container">
-
-    <!-- Sidebar Controls -->
     <aside class="sidebar">
-
-      <!-- Workflow Mode Selector -->
       <div class="sidebar-section">
         <div class="section-title">Workflow Category</div>
         <div class="mode-selector">
-          <button class="mode-tab active" data-mode="food">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            Food Item
-          </button>
-          <button class="mode-tab" data-mode="drink">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-            Beverage
-          </button>
+          <button class="mode-tab active" data-mode="food">Food Item</button>
+          <button class="mode-tab" data-mode="drink">Beverage</button>
         </div>
       </div>
 
-      <!-- FOOD MODE CONTROLS -->
-      <div id="food-controls" class="mode-controls">
-        <div class="sidebar-section">
-          <div class="section-title">Surface & Background</div>
-          <div class="option-group">
-            <label class="option-label">Select DoorDash Approved Surface</label>
-            <div class="grid-options">
-              <div class="radio-card">
-                <input type="radio" name="food-bg" id="bg-marble" value="marble" checked>
-                <label for="bg-marble">
-                  <div class="bg-preview-swatch" style="background: linear-gradient(135deg, #e0e0e0 0%, #ffffff 50%, #d5d5d5 100%);"></div>
-                  White Marble
-                </label>
-              </div>
-              <div class="radio-card">
-                <input type="radio" name="food-bg" id="bg-slate" value="slate">
-                <label for="bg-slate">
-                  <div class="bg-preview-swatch" style="background: linear-gradient(135deg, #2c3038 0%, #1a1c23 100%);"></div>
-                  Dark Slate
-                </label>
-              </div>
-              <div class="radio-card">
-                <input type="radio" name="food-bg" id="bg-wood" value="wood">
-                <label for="bg-wood">
-                  <div class="bg-preview-swatch" style="background: linear-gradient(135deg, #8a5a36 0%, #5c3a21 100%);"></div>
-                  Light Wood
-                </label>
-              </div>
-              <div class="radio-card">
-                <input type="radio" name="food-bg" id="bg-gradient" value="gradient">
-                <label for="bg-gradient">
-                  <div class="bg-preview-swatch" style="background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);"></div>
-                  Gradient Gray
-                </label>
-              </div>
-              <div class="radio-card">
-                <input type="radio" name="food-bg" id="bg-mattewhite" value="mattewhite">
-                <label for="bg-mattewhite">
-                  <div class="bg-preview-swatch" style="background: #f8fafc;"></div>
-                  Matte White
-                </label>
-              </div>
-              <div class="radio-card">
-                <input type="radio" name="food-bg" id="bg-original" value="original">
-                <label for="bg-original">
-                  <div class="bg-preview-swatch" style="background: repeating-concentric-gradient(#333 0 10px, #222 0 20px);"></div>
-                  Keep Photo
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="sidebar-section">
-          <div class="section-title">Composition & Framing</div>
-          <div class="option-group">
-            <div class="slider-control">
-              <div class="slider-header">
-                <span>Item Scale (Target 75%)</span>
-                <span class="slider-value" id="food-scale-val">75%</span>
-              </div>
-              <input type="range" id="food-scale" min="50" max="95" value="75">
-            </div>
-          </div>
-          <div class="option-group">
-            <div class="slider-control">
-              <div class="slider-header">
-                <span>Vertical Alignment</span>
-                <span class="slider-value" id="food-y-val">Center</span>
-              </div>
-              <input type="range" id="food-y" min="-20" max="20" value="0">
-            </div>
-          </div>
-        </div>
-
-        <div class="sidebar-section">
-          <div class="section-title">Exact-Match Enhancements</div>
-          <div class="option-group">
-            <div class="slider-control">
-              <div class="slider-header">
-                <span>Exposure & Brightness</span>
-                <span class="slider-value" id="food-bright-val">100%</span>
-              </div>
-              <input type="range" id="food-bright" min="80" max="130" value="105">
-            </div>
-          </div>
-          <div class="option-group">
-            <div class="slider-control">
-              <div class="slider-header">
-                <span>Clarity & Contrast</span>
-                <span class="slider-value" id="food-contrast-val">100%</span>
-              </div>
-              <input type="range" id="food-contrast" min="90" max="130" value="108">
-            </div>
-          </div>
-          <div class="option-group">
-            <div class="slider-control">
-              <div class="slider-header">
-                <span>Vibrance / Freshness</span>
-                <span class="slider-value" id="food-sat-val">100%</span>
-              </div>
-              <input type="range" id="food-sat" min="90" max="125" value="105">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- DRINK MODE CONTROLS -->
-      <div id="drink-controls" class="mode-controls" style="display: none;">
-        <div class="sidebar-section">
-          <div class="section-title">Background Style Concept</div>
-          <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.75rem;">
-            Which background style would you like for this drink scene?
-          </p>
-          <div class="option-group">
-            <div class="grid-options">
-              <div class="radio-card">
-                <input type="radio" name="drink-style" id="style-prof" value="professional" checked>
-                <label for="style-prof">
-                  <strong>Professional</strong>
-                  <span style="font-size:0.68rem; color:var(--text-muted);">Clean & Elegant</span>
-                </label>
-              </div>
-              <div class="radio-card">
-                <input type="radio" name="drink-style" id="style-creative" value="creative">
-                <label for="style-creative">
-                  <strong>Creative/Fun</strong>
-                  <span style="font-size:0.68rem; color:var(--text-muted);">Color-Coordinated</span>
-                </label>
-              </div>
-            </div>
-          </div>
-          <button class="btn btn-secondary btn-sm" id="btn-compare-drink-styles" style="width: 100%; margin-top: 0.5rem; justify-content: center;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
-            Compare Both Styles Side-by-Side
-          </button>
-        </div>
-
-        <div class="sidebar-section">
-          <div class="section-title">Beverage Profile</div>
-          <div class="option-group">
-            <label class="option-label">Temperature & Lighting Mood</label>
-            <div class="grid-options">
-              <div class="radio-card">
-                <input type="radio" name="drink-temp" id="temp-cold" value="cold" checked>
-                <label for="temp-cold">
-                  ❄️ Cold Beverage
-                  <span style="font-size:0.68rem; color:var(--text-muted);">Cool studio lighting</span>
-                </label>
-              </div>
-              <div class="radio-card">
-                <input type="radio" name="drink-temp" id="temp-hot" value="hot">
-                <label for="temp-hot">
-                  ☕ Hot Beverage
-                  <span style="font-size:0.68rem; color:var(--text-muted);">Warm cozy lighting</span>
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <div class="option-group" id="creative-hue-group" style="display: none;">
-            <label class="option-label">Creative Color Palette Accent</label>
-            <div class="grid-options grid-options-3">
-              <div class="radio-card">
-                <input type="radio" name="drink-hue" id="hue-cola" value="cola" checked>
-                <label for="hue-cola">Deep Cola</label>
-              </div>
-              <div class="radio-card">
-                <input type="radio" name="drink-hue" id="hue-citrus" value="citrus">
-                <label for="hue-citrus">Citrus Orange</label>
-              </div>
-              <div class="radio-card">
-                <input type="radio" name="drink-hue" id="hue-amber" value="amber">
-                <label for="hue-amber">Warm Amber</label>
-              </div>
-              <div class="radio-card">
-                <input type="radio" name="drink-hue" id="hue-berry" value="berry">
-                <label for="hue-berry">Berry / Cocktail</label>
-              </div>
-              <div class="radio-card">
-                <input type="radio" name="drink-hue" id="hue-matcha" value="matcha">
-                <label for="hue-matcha">Matcha / Green</label>
-              </div>
-              <div class="radio-card">
-                <input type="radio" name="drink-hue" id="hue-pastel" value="pastel">
-                <label for="hue-pastel">Pastel Neutral</label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="sidebar-section">
-          <div class="section-title">Atmospheric Effects</div>
-          <div class="switch-control" id="condensation-toggle-group">
-            <span style="font-size: 0.8rem; font-weight: 500;">Glass Condensation & Frost</span>
-            <label class="switch">
-              <input type="checkbox" id="drink-condensation" checked>
-              <span class="slider"></span>
+      <div class="sidebar-section">
+        <div class="section-title">DoorDash Approved Surface</div>
+        <div class="grid-options">
+          <div class="radio-card">
+            <input type="radio" name="food-bg" id="bg-marble" value="marble" checked>
+            <label for="bg-marble">
+              <div class="bg-preview-swatch" style="background: linear-gradient(135deg, #e0e0e0, #fff);"></div>
+              Marble
             </label>
           </div>
-          <div class="switch-control" id="steam-toggle-group" style="display: none;">
-            <span style="font-size: 0.8rem; font-weight: 500;">Soft Warm Steam Vignette</span>
-            <label class="switch">
-              <input type="checkbox" id="drink-steam">
-              <span class="slider"></span>
+          <div class="radio-card">
+            <input type="radio" name="food-bg" id="bg-slate" value="slate">
+            <label for="bg-slate">
+              <div class="bg-preview-swatch" style="background: linear-gradient(135deg, #2c3038, #1a1c23);"></div>
+              Slate
             </label>
           </div>
-          <div class="option-group" style="margin-top: 0.75rem;">
-            <div class="slider-control">
-              <div class="slider-header">
-                <span>Studio Glass Highlights</span>
-                <span class="slider-value" id="drink-glare-val">Medium</span>
-              </div>
-              <input type="range" id="drink-glare" min="0" max="100" value="50">
-            </div>
+          <div class="radio-card">
+            <input type="radio" name="food-bg" id="bg-wood" value="wood">
+            <label for="bg-wood">
+              <div class="bg-preview-swatch" style="background: linear-gradient(135deg, #8a5a36, #5c3a21);"></div>
+              Wood
+            </label>
+          </div>
+          <div class="radio-card">
+            <input type="radio" name="food-bg" id="bg-mattewhite" value="mattewhite">
+            <label for="bg-mattewhite">
+              <div class="bg-preview-swatch" style="background: #f8fafc;"></div>
+              Matte White
+            </label>
           </div>
         </div>
       </div>
-
     </aside>
 
-    <!-- Workspace Viewport -->
     <main class="workspace">
-
-      <!-- State 1: Dropzone Upload -->
       <div class="dropzone-container" id="view-upload">
         <div class="dropzone" id="dropzone">
-          <div class="dropzone-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          </div>
-          <div>
-            <div class="dropzone-title">Drop DoorDash Merchant Photos Here</div>
-            <div class="dropzone-desc">Upload one or multiple raw menu photos (JPG, PNG, WEBP). DashLens will auto-format to 16:9 compliance standards.</div>
-          </div>
+          <div class="dropzone-title">Drop DoorDash Photos Here</div>
+          <p style="font-size:0.85rem; color:var(--text-muted)">Supports raw food and drink images</p>
           <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">Browse Files</button>
-          <input type="file" id="file-input" multiple accept="image/*" style="display: none;">
+          <input type="file" id="file-input" accept="image/*" style="display:none;">
         </div>
       </div>
 
-      <!-- State 2: Interactive Editor Stage -->
       <div class="editor-view" id="view-editor">
-
-        <!-- Batch & View Toolbar -->
-        <div class="editor-toolbar">
-          <div class="batch-selector" id="batch-thumbs">
-            <!-- Thumbnails inserted dynamically -->
-          </div>
-          <div class="view-mode-toggle">
-            <button class="view-btn active" id="view-btn-single">16:9 Final</button>
-            <button class="view-btn" id="view-btn-compare">Split Comparison</button>
+        <div class="stage-wrapper">
+          <canvas id="main-canvas" class="stage-canvas"></canvas>
+          <div class="safe-zone-box">
+            <span class="safe-zone-tag">75% DoorDash Safe Zone</span>
           </div>
         </div>
-
-        <!-- Stage Viewport -->
-        <div class="preview-stage-container">
-          <div class="stage-wrapper">
-            <!-- Main Rendering Canvas -->
-            <canvas id="main-canvas" class="stage-canvas"></canvas>
-
-            <!-- Compare Canvas View -->
-            <div class="compare-container" id="compare-stage">
-              <div class="compare-half">
-                <span class="compare-label">Original Raw</span>
-                <img id="compare-orig-img" src="" alt="Original">
-              </div>
-              <div class="compare-divider"></div>
-              <div class="compare-half">
-                <span class="compare-label">DashLens Compliant</span>
-                <canvas id="compare-canvas"></canvas>
-              </div>
-            </div>
-
-            <!-- DoorDash Safe Grid Overlay -->
-            <div class="overlay-grid active" id="safe-grid">
-              <div class="safe-zone-box">
-                <span class="safe-zone-tag">75% Safe Focal Zone</span>
-              </div>
-            </div>
-          </div>
-          
-          <div style="display: flex; gap: 1.5rem; font-size: 0.78rem; color: var(--text-muted);">
-            <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
-              <input type="checkbox" id="toggle-grid-check" checked>
-              Show DoorDash 16:9 Framing Guidelines
-            </label>
-          </div>
-        </div>
-
-        <!-- DoorDash Compliance Assessment -->
-        <div class="compliance-card">
-          <div class="compliance-header">
-            <div style="display: flex; align-items: center; gap: 0.6rem;">
-              <span style="font-weight: 700; font-size: 0.9rem;">DoorDash Photo Guidelines Verification</span>
-              <span class="compliance-badge" id="compliance-status-badge">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                100% Compliant
-              </span>
-            </div>
-            <span style="font-size: 0.75rem; color: var(--text-dim);">Merchant Standard 2026</span>
-          </div>
-
-          <div class="compliance-grid">
-            <div class="check-item">
-              <span class="check-icon">✓</span>
-              <span><strong>16:9 Aspect Ratio:</strong> Standardized landscape fit for app menu feeds.</span>
-            </div>
-            <div class="check-item">
-              <span class="check-icon">✓</span>
-              <span><strong>70-80% Scale:</strong> Subject perfectly fills focal area without clipping.</span>
-            </div>
-            <div class="check-item">
-              <span class="check-icon">✓</span>
-              <span><strong>Exact-Match Preservation:</strong> No added, removed, or false props.</span>
-            </div>
-            <div class="check-item">
-              <span class="check-icon">✓</span>
-              <span><strong>Neutral Backdrop:</strong> Uncluttered, studio-lit surface.</span>
-            </div>
-          </div>
-
-          <div class="prohibited-list">
-            <span class="prohibited-title">Verified Exclusions:</span>
-            <span class="prohibited-tag">No Hands/Faces</span>
-            <span class="prohibited-tag">No Logos/Watermarks</span>
-            <span class="prohibited-tag">No Text/Prices</span>
-            <span class="prohibited-tag">No Unrelated Props</span>
-            <span class="prohibited-tag">No Misleading Filters</span>
-          </div>
-        </div>
-
       </div>
-
     </main>
-
   </div>
 
-  <!-- Toast Container -->
-  <div class="toast" id="toast">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00C853" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-    <span id="toast-message">Presentation exported successfully.</span>
-  </div>
-
-  <!-- Drink Dual Preview Modal -->
-  <div class="modal-overlay" id="drink-preview-modal">
+  <!-- OpenAI ChatGPT Enhancer Modal -->
+  <div class="modal-overlay" id="ai-modal">
     <div class="modal-content">
-      <div class="modal-header">
-        <div>
-          <div class="modal-title">Select Background Concept</div>
-          <div style="font-size:0.8rem; color:var(--text-muted);">DoorDash allows two presentation styles for beverages. Choose one for final output:</div>
-        </div>
-        <button class="btn btn-secondary btn-sm" id="close-modal-btn">✕ Close</button>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="ai-badge">✨ ChatGPT GPT-4o Vision & DALL-E 3</span>
+        <button class="btn btn-secondary btn-sm" onclick="closeAiModal()">✕</button>
       </div>
 
-      <div class="dual-preview-grid">
-        <!-- Professional Card -->
-        <div class="preview-card" id="card-select-prof">
-          <canvas class="preview-card-img" id="modal-canvas-prof"></canvas>
-          <div class="preview-card-info">
-            <div class="preview-card-title">
-              Professional Concept
-              <span style="font-size:0.7rem; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px;">Default Standard</span>
-            </div>
-            <div class="preview-card-desc">Clean, neutral, and elegant studio backdrop (Marble/Slate). Best for core menu listings and standard marketplace displays.</div>
-          </div>
-        </div>
-
-        <!-- Creative Card -->
-        <div class="preview-card" id="card-select-creative">
-          <canvas class="preview-card-img" id="modal-canvas-creative"></canvas>
-          <div class="preview-card-info">
-            <div class="preview-card-title">
-              Creative / Fun Concept
-              <span style="font-size:0.7rem; background:rgba(41,121,255,0.2); color:#2979FF; padding:2px 6px; border-radius:4px;">Color-Coordinated</span>
-            </div>
-            <div class="preview-card-desc">Vibrant, brand-safe hue transition tuned specifically to the beverage type. Great for promotional highlights.</div>
-          </div>
-        </div>
+      <div>
+        <h3 style="font-size:1.1rem; font-weight:700;">DoorDash Compliant AI Refinement</h3>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.3rem;">
+          Connect your OpenAI API key to run Vision AI compliance analysis or regenerate studio backgrounds automatically.
+        </p>
       </div>
+
+      <div>
+        <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:0.4rem;">OpenAI API Key</label>
+        <input type="password" id="openai-api-key" class="input-field" placeholder="sk-proj-..." />
+      </div>
+
+      <div>
+        <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:0.4rem;">Enhancement Prompt</label>
+        <input type="text" id="ai-prompt" class="input-field" value="Enhance framing and studio lighting while strictly maintaining exact-match food item ingredients." />
+      </div>
+
+      <div style="display:flex; gap:0.75rem; justify-content:flex-end; margin-top:0.5rem;">
+        <button class="btn btn-secondary" onclick="runVisionComplianceCheck()">Analyze DoorDash Compliance</button>
+        <button class="btn btn-ai" id="btn-run-ai">
+          <span id="ai-btn-text">Generate AI Image</span>
+          <div class="loader-spinner" id="ai-loader" style="display:none;"></div>
+        </button>
+      </div>
+
+      <div id="ai-analysis-output" style="display:none; background:var(--bg-dark); padding:0.85rem; border-radius:var(--radius-sm); font-size:0.8rem; border:1px solid var(--panel-border);"></div>
     </div>
   </div>
 
+  <div class="toast" id="toast">
+    <span id="toast-message">Success</span>
+  </div>
+
   <script>
-    /**
-     * DASHLENS ENGINE - Production JavaScript
-     */
+    const state = { mode: 'food', bg: 'marble', image: null };
 
-    // App State Management
-    const state = {
-      mode: 'food', // 'food' | 'drink'
-      images: [], // List of loaded image objects { id, src, img, name }
-      currentIndex: 0,
-      
-      // Food Mode Settings
-      food: {
-        background: 'marble',
-        scale: 75,
-        offsetY: 0,
-        brightness: 105,
-        contrast: 108,
-        saturation: 105
-      },
+    const canvas = document.getElementById('main-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 1920; canvas.height = 1080;
 
-      // Drink Mode Settings
-      drink: {
-        style: 'professional', // 'professional' | 'creative'
-        temp: 'cold', // 'cold' | 'hot'
-        hue: 'cola',
-        condensation: true,
-        steam: false,
-        glare: 50
-      },
-
-      viewMode: 'single' // 'single' | 'compare'
-    };
-
-    // Cached DOM Elements
-    const DOM = {
-      body: document.body,
-      dropzone: document.getElementById('dropzone'),
-      fileInput: document.getElementById('file-input'),
-      viewUpload: document.getElementById('view-upload'),
-      viewEditor: document.getElementById('view-editor'),
-      batchThumbs: document.getElementById('batch-thumbs'),
-      mainCanvas: document.getElementById('main-canvas'),
-      compareStage: document.getElementById('compare-stage'),
-      compareOrigImg: document.getElementById('compare-orig-img'),
-      compareCanvas: document.getElementById('compare-canvas'),
-      safeGrid: document.getElementById('safe-grid'),
-      toggleGridCheck: document.getElementById('toggle-grid-check'),
-      foodControls: document.getElementById('food-controls'),
-      drinkControls: document.getElementById('drink-controls'),
-      toast: document.getElementById('toast'),
-      toastMessage: document.getElementById('toast-message'),
-      
-      // Drink Modal
-      drinkModal: document.getElementById('drink-preview-modal'),
-      btnCompareDrinkStyles: document.getElementById('btn-compare-drink-styles'),
-      modalCanvasProf: document.getElementById('modal-canvas-prof'),
-      modalCanvasCreative: document.getElementById('modal-canvas-creative'),
-      cardSelectProf: document.getElementById('card-select-prof'),
-      cardSelectCreative: document.getElementById('card-select-creative'),
-      closeModalBtn: document.getElementById('close-modal-btn'),
-
-      // Buttons
-      btnNewUpload: document.getElementById('btn-new-upload'),
-      btnExportAll: document.getElementById('btn-export-all'),
-      viewBtnSingle: document.getElementById('view-btn-single'),
-      viewBtnCompare: document.getElementById('view-btn-compare')
-    };
-
-    // Canvas Contexts
-    const ctx = DOM.mainCanvas.getContext('2d');
-    const compareCtx = DOM.compareCanvas.getContext('2d');
-
-    // Initialize App Event Listeners
-    function init() {
-      setupModeTabs();
-      setupFileUpload();
-      setupControls();
-      setupViewModes();
-      setupDrinkModal();
-
-      // Set canvas size (16:9 standard resolution 1920x1080)
-      DOM.mainCanvas.width = 1920;
-      DOM.mainCanvas.height = 1080;
-      DOM.compareCanvas.width = 1920;
-      DOM.compareCanvas.height = 1080;
-    }
-
-    // Switch between Food and Drink Workflows
-    function setupModeTabs() {
-      const modeTabs = document.querySelectorAll('.mode-tab');
-      modeTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          modeTabs.forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
-          state.mode = tab.dataset.mode;
-
-          if (state.mode === 'food') {
-            DOM.body.classList.remove('drink-mode');
-            DOM.body.classList.add('food-mode');
-            DOM.foodControls.style.display = 'block';
-            DOM.drinkControls.style.display = 'none';
-          } else {
-            DOM.body.classList.remove('food-mode');
-            DOM.body.classList.add('drink-mode');
-            DOM.foodControls.style.display = 'none';
-            DOM.drinkControls.style.display = 'block';
-          }
-
-          renderCurrentCanvas();
-        });
-      });
-    }
-
-    // Setup Drag-and-Drop & File Loading
-    function setupFileUpload() {
-      const dropzone = DOM.dropzone;
-
-      ['dragenter', 'dragover'].forEach(eventName => {
-        dropzone.addEventListener(eventName, (e) => {
-          e.preventDefault();
-          dropzone.classList.add('dragover');
-        });
-      });
-
-      ['dragleave', 'drop'].forEach(eventName => {
-        dropzone.addEventListener(eventName, (e) => {
-          e.preventDefault();
-          dropzone.classList.remove('dragover');
-        });
-      });
-
-      dropzone.addEventListener('drop', (e) => {
-        const files = e.dataTransfer.files;
-        handleFiles(files);
-      });
-
-      DOM.fileInput.addEventListener('change', (e) => {
-        handleFiles(e.target.files);
-      });
-
-      DOM.btnNewUpload.addEventListener('click', () => {
-        DOM.fileInput.click();
-      });
-    }
-
-    function handleFiles(files) {
-      if (!files || files.length === 0) return;
-
-      const fileArray = Array.from(files).filter(f => f.type.startsWith('image/'));
-      if (fileArray.length === 0) return;
-
-      let loadedCount = 0;
-      const newImages = [];
-
-      fileArray.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            newImages.push({
-              id: Math.random().toString(36).substr(2, 9),
-              name: file.name,
-              src: e.target.result,
-              img: img
-            });
-
-            loadedCount++;
-            if (loadedCount === fileArray.length) {
-              state.images = state.images.concat(newImages);
-              if (state.images.length === newImages.length) {
-                state.currentIndex = 0;
-              }
-              switchViewToEditor();
-            }
-          };
-          img.src = e.target.result;
+    // File Drop Handle
+    document.getElementById('file-input').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          state.image = img;
+          document.getElementById('view-upload').style.display = 'none';
+          document.getElementById('view-editor').classList.add('active');
+          renderCanvas();
         };
-        reader.readAsDataURL(file);
-      });
-    }
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
 
-    function switchViewToEditor() {
-      DOM.viewUpload.style.display = 'none';
-      DOM.viewEditor.classList.add('active');
-      renderThumbs();
-      renderCurrentCanvas();
-    }
+    function renderCanvas() {
+      if (!state.image) return;
+      ctx.clearRect(0, 0, 1920, 1080);
 
-    // Render Batch Thumbnails in Toolbar
-    function renderThumbs() {
-      DOM.batchThumbs.innerHTML = '';
-      state.images.forEach((item, index) => {
-        const imgEl = document.createElement('img');
-        imgEl.src = item.src;
-        imgEl.className = `thumb-item ${index === state.currentIndex ? 'active' : ''}`;
-        imgEl.addEventListener('click', () => {
-          state.currentIndex = index;
-          renderThumbs();
-          renderCurrentCanvas();
-        });
-        DOM.batchThumbs.appendChild(imgEl);
-      });
-    }
-
-    // Bind Controls to State and Redraw
-    function setupControls() {
-      // Food Radios
-      document.querySelectorAll('input[name="food-bg"]').forEach(radio => {
-        radio.addEventListener('change', (e) => {
-          state.food.background = e.target.value;
-          renderCurrentCanvas();
-        });
-      });
-
-      // Food Sliders
-      bindSlider('food-scale', (val) => {
-        state.food.scale = parseInt(val);
-        document.getElementById('food-scale-val').textContent = `${val}%`;
-      });
-
-      bindSlider('food-y', (val) => {
-        state.food.offsetY = parseInt(val);
-        document.getElementById('food-y-val').textContent = val == 0 ? 'Center' : `${val > 0 ? '+' : ''}${val}%`;
-      });
-
-      bindSlider('food-bright', (val) => {
-        state.food.brightness = parseInt(val);
-        document.getElementById('food-bright-val').textContent = `${val}%`;
-      });
-
-      bindSlider('food-contrast', (val) => {
-        state.food.contrast = parseInt(val);
-        document.getElementById('food-contrast-val').textContent = `${val}%`;
-      });
-
-      bindSlider('food-sat', (val) => {
-        state.food.saturation = parseInt(val);
-        document.getElementById('food-sat-val').textContent = `${val}%`;
-      });
-
-      // Drink Radios
-      document.querySelectorAll('input[name="drink-style"]').forEach(radio => {
-        radio.addEventListener('change', (e) => {
-          state.drink.style = e.target.value;
-          document.getElementById('creative-hue-group').style.display = 
-            state.drink.style === 'creative' ? 'block' : 'none';
-          renderCurrentCanvas();
-        });
-      });
-
-      document.querySelectorAll('input[name="drink-temp"]').forEach(radio => {
-        radio.addEventListener('change', (e) => {
-          state.drink.temp = e.target.value;
-          const isCold = state.drink.temp === 'cold';
-          document.getElementById('condensation-toggle-group').style.display = isCold ? 'flex' : 'none';
-          document.getElementById('steam-toggle-group').style.display = isCold ? 'none' : 'flex';
-          renderCurrentCanvas();
-        });
-      });
-
-      document.querySelectorAll('input[name="drink-hue"]').forEach(radio => {
-        radio.addEventListener('change', (e) => {
-          state.drink.hue = e.target.value;
-          renderCurrentCanvas();
-        });
-      });
-
-      // Drink Switches
-      document.getElementById('drink-condensation').addEventListener('change', (e) => {
-        state.drink.condensation = e.target.checked;
-        renderCurrentCanvas();
-      });
-
-      document.getElementById('drink-steam').addEventListener('change', (e) => {
-        state.drink.steam = e.target.checked;
-        renderCurrentCanvas();
-      });
-
-      bindSlider('drink-glare', (val) => {
-        state.drink.glare = parseInt(val);
-        const text = val < 30 ? 'Low' : val < 70 ? 'Medium' : 'High';
-        document.getElementById('drink-glare-val').textContent = text;
-      });
-
-      // Grid overlay toggle
-      DOM.toggleGridCheck.addEventListener('change', (e) => {
-        if (e.target.checked) {
-          DOM.safeGrid.classList.add('active');
-        } else {
-          DOM.safeGrid.classList.remove('active');
-        }
-      });
-
-      // Export Button
-      DOM.btnExportAll.addEventListener('click', exportCurrentImage);
-    }
-
-    function bindSlider(id, callback) {
-      const el = document.getElementById(id);
-      if (el) {
-        el.addEventListener('input', (e) => {
-          callback(e.target.value);
-          renderCurrentCanvas();
-        });
-      }
-    }
-
-    // Setup View Modes (Single vs Compare)
-    function setupViewModes() {
-      DOM.viewBtnSingle.addEventListener('click', () => {
-        DOM.viewBtnSingle.classList.add('active');
-        DOM.viewBtnCompare.classList.remove('active');
-        DOM.mainCanvas.style.display = 'block';
-        DOM.compareStage.classList.remove('active');
-        state.viewMode = 'single';
-      });
-
-      DOM.viewBtnCompare.addEventListener('click', () => {
-        DOM.viewBtnCompare.classList.add('active');
-        DOM.viewBtnSingle.classList.remove('active');
-        DOM.mainCanvas.style.display = 'none';
-        DOM.compareStage.classList.add('active');
-        state.viewMode = 'compare';
-        renderCurrentCanvas();
-      });
-    }
-
-    // Modal Comparison Setup for Drinks
-    function setupDrinkModal() {
-      DOM.btnCompareDrinkStyles.addEventListener('click', () => {
-        if (state.images.length === 0) return;
-        
-        // Render Professional into Modal Canvas 1
-        renderDrinkToCanvas(DOM.modalCanvasProf, { ...state.drink, style: 'professional' });
-        // Render Creative into Modal Canvas 2
-        renderDrinkToCanvas(DOM.modalCanvasCreative, { ...state.drink, style: 'creative' });
-
-        DOM.drinkModal.classList.add('active');
-      });
-
-      DOM.closeModalBtn.addEventListener('click', () => {
-        DOM.drinkModal.classList.remove('active');
-      });
-
-      DOM.cardSelectProf.addEventListener('click', () => {
-        state.drink.style = 'professional';
-        document.getElementById('style-prof').checked = true;
-        document.getElementById('creative-hue-group').style.display = 'none';
-        DOM.drinkModal.classList.remove('active');
-        renderCurrentCanvas();
-      });
-
-      DOM.cardSelectCreative.addEventListener('click', () => {
-        state.drink.style = 'creative';
-        document.getElementById('style-creative').checked = true;
-        document.getElementById('creative-hue-group').style.display = 'block';
-        DOM.drinkModal.classList.remove('active');
-        renderCurrentCanvas();
-      });
-    }
-
-    // Core Rendering Pipeline
-    function renderCurrentCanvas() {
-      if (state.images.length === 0) return;
-      const currentItem = state.images[state.currentIndex];
-
-      if (state.viewMode === 'compare') {
-        DOM.compareOrigImg.src = currentItem.src;
-        if (state.mode === 'food') {
-          renderFoodToCanvas(DOM.compareCanvas);
-        } else {
-          renderDrinkToCanvas(DOM.compareCanvas, state.drink);
-        }
+      // Background
+      if (state.bg === 'marble') {
+        const grad = ctx.createLinearGradient(0, 0, 1920, 1080);
+        grad.addColorStop(0, '#f0f0f0'); grad.addColorStop(1, '#d8d8d8');
+        ctx.fillStyle = grad;
       } else {
-        if (state.mode === 'food') {
-          renderFoodToCanvas(DOM.mainCanvas);
-        } else {
-          renderDrinkToCanvas(DOM.mainCanvas, state.drink);
-        }
+        ctx.fillStyle = '#f8fafc';
       }
-    }
+      ctx.fillRect(0, 0, 1920, 1080);
 
-    /**
-     * FOOD MODE RENDER ENGINE
-     * Enforces Exact-Match Compliance & DoorDash Neutral Backgrounds
-     */
-    function renderFoodToCanvas(targetCanvas) {
-      const cCtx = targetCanvas.getContext('2d');
-      const width = targetCanvas.width = 1920;
-      const height = targetCanvas.height = 1080;
-      const currentItem = state.images[state.currentIndex];
-      const img = currentItem.img;
-
-      cCtx.clearRect(0, 0, width, height);
-
-      // 1. Draw DoorDash Approved Background
-      drawFoodBackground(cCtx, width, height, state.food.background, img);
-
-      // 2. Exact-match food positioning
-      const targetScale = state.food.scale / 100; // default 0.75
-      const aspect = img.width / img.height;
-      
-      let drawH = height * targetScale;
+      // Subject 75% Scale
+      const aspect = state.image.width / state.image.height;
+      let drawH = 1080 * 0.75;
       let drawW = drawH * aspect;
+      const x = (1920 - drawW) / 2;
+      const y = (1080 - drawH) / 2;
 
-      // Handle extra wide dishes
-      if (drawW > width * 0.85) {
-        drawW = width * 0.85;
-        drawH = drawW / aspect;
-      }
-
-      const x = (width - drawW) / 2;
-      const y = (height - drawH) / 2 + (state.food.offsetY * 5);
-
-      // 3. Apply color enhancements (brightness, contrast, saturation)
-      cCtx.save();
-      cCtx.filter = `brightness(${state.food.brightness}%) contrast(${state.food.contrast}%) saturate(${state.food.saturation}%)`;
-
-      // Draw Soft Drop Shadow for realism on surface
-      if (state.food.background !== 'original') {
-        cCtx.shadowColor = 'rgba(0, 0, 0, 0.25)';
-        cCtx.shadowBlur = 40;
-        cCtx.shadowOffsetY = 25;
-      }
-
-      cCtx.drawImage(img, x, y, drawW, drawH);
-      cCtx.restore();
-
-      // 4. Subtle Studio Soft Top Light Vignette
-      drawStudioVignette(cCtx, width, height);
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,0.2)';
+      ctx.shadowBlur = 30;
+      ctx.shadowOffsetY = 15;
+      ctx.drawImage(state.image, x, y, drawW, drawH);
+      ctx.restore();
     }
 
-    function drawFoodBackground(cCtx, w, h, bgType, img) {
-      if (bgType === 'original') {
-        // Blur and extend original photo as background fill
-        cCtx.save();
-        cCtx.filter = 'blur(30px) brightness(70%)';
-        cCtx.drawImage(img, -50, -50, w + 100, h + 100);
-        cCtx.restore();
-        return;
-      }
-
-      if (bgType === 'marble') {
-        const grad = cCtx.createLinearGradient(0, 0, w, h);
-        grad.addColorStop(0, '#f0f0f0');
-        grad.addColorStop(0.5, '#e4e4e4');
-        grad.addColorStop(1, '#d8d8d8');
-        cCtx.fillStyle = grad;
-        cCtx.fillRect(0, 0, w, h);
-
-        // Subtle marble vein textures
-        cCtx.strokeStyle = 'rgba(180, 180, 180, 0.15)';
-        cCtx.lineWidth = 3;
-        cCtx.beginPath();
-        cCtx.moveTo(0, h * 0.2);
-        cCtx.bezierCurveTo(w * 0.3, h * 0.1, w * 0.6, h * 0.5, w, h * 0.4);
-        cCtx.stroke();
-      } else if (bgType === 'slate') {
-        const grad = cCtx.createRadialGradient(w/2, h/2, 100, w/2, h/2, w/1.2);
-        grad.addColorStop(0, '#2e3440');
-        grad.addColorStop(1, '#1a1d24');
-        cCtx.fillStyle = grad;
-        cCtx.fillRect(0, 0, w, h);
-      } else if (bgType === 'wood') {
-        const grad = cCtx.createLinearGradient(0, 0, 0, h);
-        grad.addColorStop(0, '#8d5b36');
-        grad.addColorStop(0.5, '#7a4e2d');
-        grad.addColorStop(1, '#674124');
-        cCtx.fillStyle = grad;
-        cCtx.fillRect(0, 0, w, h);
-      } else if (bgType === 'gradient') {
-        const grad = cCtx.createLinearGradient(0, 0, 0, h);
-        grad.addColorStop(0, '#e2e8f0');
-        grad.addColorStop(1, '#94a3b8');
-        cCtx.fillStyle = grad;
-        cCtx.fillRect(0, 0, w, h);
-      } else if (bgType === 'mattewhite') {
-        cCtx.fillStyle = '#f8fafc';
-        cCtx.fillRect(0, 0, w, h);
-      }
+    // Modal Events
+    document.getElementById('btn-open-ai-modal').addEventListener('click', () => {
+      document.getElementById('ai-modal').classList.add('active');
+    });
+    function closeAiModal() {
+      document.getElementById('ai-modal').classList.remove('active');
     }
 
-    /**
-     * DRINK MODE RENDER ENGINE
-     * Handles Professional vs Creative/Fun Backdrops + Cold/Hot Atmospheric Effects
-     */
-    function renderDrinkToCanvas(targetCanvas, drinkSettings) {
-      const cCtx = targetCanvas.getContext('2d');
-      const width = targetCanvas.width = 1920;
-      const height = targetCanvas.height = 1080;
-      const currentItem = state.images[state.currentIndex];
-      const img = currentItem.img;
+    // DoorDash System Prompts Injection
+    const DOORDASH_STRICT_PROMPT = `
+      You are a DoorDash merchant photo processing assistant.
+      Requirements:
+      1. EXACT-MATCH preserve all food ingredients, portions, layout, and packaging.
+      2. PROHIBITED: Do not add or remove garnishes, hands, logos, watermarks, text, prices, or extraneous utensils.
+      3. Place item on a neutral studio background (white marble or matte slate) centered in a 16:9 landscape aspect ratio.
+      4. Item must occupy 70-80% of the frame height with soft studio lighting.
+    `;
 
-      cCtx.clearRect(0, 0, width, height);
+    // 1. ChatGPT GPT-4o Vision Compliance Analysis
+    async function runVisionComplianceCheck() {
+      const apiKey = document.getElementById('openai-api-key').value;
+      if (!apiKey) return alert("Please enter your OpenAI API key.");
+      if (!state.image) return alert("Please upload an image first.");
 
-      // 1. Render Background based on Style choice
-      if (drinkSettings.style === 'professional') {
-        // Clean, elegant, neutral studio gradient
-        const isCold = drinkSettings.temp === 'cold';
-        const grad = cCtx.createRadialGradient(width/2, height/2, 100, width/2, height/2, width/1.2);
-        
-        if (isCold) {
-          grad.addColorStop(0, '#eef2f7');
-          grad.addColorStop(1, '#b0c0d0');
+      const output = document.getElementById('ai-analysis-output');
+      output.style.display = 'block';
+      output.innerHTML = "<em>Analyzing image against DoorDash compliance guidelines using GPT-4o Vision...</em>";
+
+      const base64Image = canvas.toDataURL('image/jpeg').split(',')[1];
+
+      try {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o',
+            messages: [
+              {
+                role: 'system',
+                content: DOORDASH_STRICT_PROMPT
+              },
+              {
+                role: 'user',
+                content: [
+                  { type: 'text', text: 'Evaluate this image against DoorDash merchant requirements. List any violations (hands, logos, text overlays, framing scale) and provide a compliance score from 0-100.' },
+                  { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${base64Image}` } }
+                ]
+              }
+            ]
+          })
+        });
+
+        const data = await response.json();
+        if (data.choices && data.choices[0]) {
+          output.innerHTML = `<strong>DoorDash Vision Audit:</strong><br>${data.choices[0].message.content.replace(/\n/g, '<br>')}`;
         } else {
-          grad.addColorStop(0, '#fdf8f2');
-          grad.addColorStop(1, '#d5c5b5');
+          output.innerHTML = "Error analyzing image: " + JSON.stringify(data);
         }
-        cCtx.fillStyle = grad;
-        cCtx.fillRect(0, 0, width, height);
-      } else {
-        // Creative / Fun Color-Coordinated Backdrop
-        drawCreativeDrinkBackground(cCtx, width, height, drinkSettings.hue);
+      } catch (err) {
+        output.innerHTML = "Request failed: " + err.message;
       }
-
-      // 2. Center and scale drink item
-      const aspect = img.width / img.height;
-      let drawH = height * 0.78; // 78% frame occupancy
-      let drawW = drawH * aspect;
-
-      if (drawW > width * 0.7) {
-        drawW = width * 0.7;
-        drawH = drawW / aspect;
-      }
-
-      const x = (width - drawW) / 2;
-      const y = (height - drawH) / 2;
-
-      // 3. Draw Contact Shadow
-      cCtx.save();
-      cCtx.fillStyle = 'rgba(0, 0, 0, 0.22)';
-      cCtx.beginPath();
-      cCtx.ellipse(width / 2, y + drawH - 10, drawW * 0.4, 18, 0, 0, Math.PI * 2);
-      cCtx.fill();
-      cCtx.restore();
-
-      // 4. Draw Drink Image with temperature light filter
-      cCtx.save();
-      if (drinkSettings.temp === 'cold') {
-        cCtx.filter = 'brightness(102%) contrast(106%) saturate(108%)';
-      } else {
-        cCtx.filter = 'brightness(103%) sepia(8%) contrast(104%)';
-      }
-
-      cCtx.drawImage(img, x, y, drawW, drawH);
-      cCtx.restore();
-
-      // 5. Atmospheric Overlay Effects (Condensation/Frost or Warm Steam)
-      if (drinkSettings.temp === 'cold' && drinkSettings.condensation) {
-        drawCondensationEffect(cCtx, x, y, drawW, drawH);
-      } else if (drinkSettings.temp === 'hot' && drinkSettings.steam) {
-        drawSteamEffect(cCtx, width, height, x, y, drawW);
-      }
-
-      // 6. Studio Glass Glare Highlights
-      if (drinkSettings.glare > 0) {
-        drawStudioGlare(cCtx, x, y, drawW, drawH, drinkSettings.glare);
-      }
-
-      drawStudioVignette(cCtx, width, height);
     }
 
-    function drawCreativeDrinkBackground(cCtx, w, h, hueType) {
-      const grad = cCtx.createLinearGradient(0, 0, w, h);
+    // 2. DALL-E 3 / GPT-4o Image Enhancement Call
+    document.getElementById('btn-run-ai').addEventListener('click', async () => {
+      const apiKey = document.getElementById('openai-api-key').value;
+      const userPrompt = document.getElementById('ai-prompt').value;
+      if (!apiKey) return alert("Please enter your OpenAI API key.");
 
-      switch (hueType) {
-        case 'cola':
-          grad.addColorStop(0, '#3a0d0d');
-          grad.addColorStop(0.5, '#1a0505');
-          grad.addColorStop(1, '#080101');
-          break;
-        case 'citrus':
-          grad.addColorStop(0, '#ff7e5f');
-          grad.addColorStop(1, '#feb47b');
-          break;
-        case 'amber':
-          grad.addColorStop(0, '#d48c46');
-          grad.addColorStop(1, '#854d0e');
-          break;
-        case 'berry':
-          grad.addColorStop(0, '#833ab4');
-          grad.addColorStop(0.5, '#fd1d1d');
-          grad.addColorStop(1, '#fcb045');
-          break;
-        case 'matcha':
-          grad.addColorStop(0, '#84a98c');
-          grad.addColorStop(1, '#354f52');
-          break;
-        case 'pastel':
-        default:
-          grad.addColorStop(0, '#e0c3fc');
-          grad.addColorStop(1, '#8ec5fc');
-          break;
+      document.getElementById('ai-loader').style.display = 'inline-block';
+      document.getElementById('ai-btn-text').textContent = 'Processing...';
+
+      try {
+        const fullPrompt = `${DOORDASH_STRICT_PROMPT}. User Request: ${userPrompt}`;
+        const response = await fetch('https://api.openai.com/v1/images/generations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: 'dall-e-3',
+            prompt: fullPrompt,
+            n: 1,
+            size: '1792x1024', // 16:9 format
+            response_format: 'b64_json'
+          })
+        });
+
+        const data = await response.json();
+        if (data.data && data.data[0]) {
+          const newImg = new Image();
+          newImg.onload = () => {
+            state.image = newImg;
+            renderCanvas();
+            closeAiModal();
+            showToast("AI DoorDash enhanced photo generated!");
+          };
+          newImg.src = 'data:image/png;base64,' + data.data[0].b64_json;
+        } else {
+          alert("Generation error: " + (data.error?.message || "Unknown error"));
+        }
+      } catch (err) {
+        alert("API error: " + err.message);
+      } finally {
+        document.getElementById('ai-loader').style.display = 'none';
+        document.getElementById('ai-btn-text').textContent = 'Generate AI Image';
       }
-
-      cCtx.fillStyle = grad;
-      cCtx.fillRect(0, 0, w, h);
-    }
-
-    // Procedural Cold Condensation Water Droplets
-    function drawCondensationEffect(cCtx, x, y, w, h) {
-      cCtx.save();
-      cCtx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-      
-      // Draw realistic condensation droplets over beverage glass
-      const numDrops = 45;
-      for (let i = 0; i < numDrops; i++) {
-        const dropX = x + (0.2 + (i * 0.017) % 0.6) * w;
-        const dropY = y + (0.25 + (i * 0.023) % 0.55) * h;
-        const radius = (i % 3) + 1.5;
-
-        cCtx.beginPath();
-        cCtx.arc(dropX, dropY, radius, 0, Math.PI * 2);
-        cCtx.fill();
-      }
-      cCtx.restore();
-    }
-
-    // Procedural Soft Warm Steam Overlay
-    function drawSteamEffect(cCtx, w, h, x, y, drawW) {
-      cCtx.save();
-      const grad = cCtx.createRadialGradient(
-        x + drawW/2, y + 80, 10,
-        x + drawW/2, y + 40, 160
-      );
-      grad.addColorStop(0, 'rgba(255, 255, 255, 0.25)');
-      grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-      cCtx.fillStyle = grad;
-      cCtx.beginPath();
-      cCtx.arc(x + drawW/2, y + 60, 180, 0, Math.PI * 2);
-      cCtx.fill();
-      cCtx.restore();
-    }
-
-    // Studio Glare Glass Accent
-    function drawStudioGlare(cCtx, x, y, w, h, opacityVal) {
-      cCtx.save();
-      const alpha = (opacityVal / 100) * 0.18;
-      cCtx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-      
-      cCtx.beginPath();
-      cCtx.moveTo(x + w * 0.2, y + h * 0.15);
-      cCtx.lineTo(x + w * 0.28, y + h * 0.15);
-      cCtx.lineTo(x + w * 0.22, y + h * 0.8);
-      cCtx.lineTo(x + w * 0.15, y + h * 0.8);
-      cCtx.closePath();
-      cCtx.fill();
-      cCtx.restore();
-    }
-
-    function drawStudioVignette(cCtx, w, h) {
-      cCtx.save();
-      const grad = cCtx.createRadialGradient(w/2, h/2, w*0.35, w/2, h/2, w*0.7);
-      grad.addColorStop(0, 'rgba(0,0,0,0)');
-      grad.addColorStop(1, 'rgba(0,0,0,0.18)');
-      cCtx.fillStyle = grad;
-      cCtx.fillRect(0, 0, w, h);
-      cCtx.restore();
-    }
-
-    // Export Processed Image
-    function exportCurrentImage() {
-      if (state.images.length === 0) return;
-
-      const link = document.createElement('a');
-      const currentItem = state.images[state.currentIndex];
-      const cleanName = currentItem.name.replace(/\.[^/.]+$/, "");
-      
-      link.download = `DashLens_DoorDash_16x9_${state.mode.toUpperCase()}_${cleanName}.png`;
-      link.href = DOM.mainCanvas.toDataURL('image/png', 0.95);
-      link.click();
-
-      showToast(`Exported "${cleanName}" in DoorDash 16:9 format.`);
-    }
+    });
 
     function showToast(msg) {
-      DOM.toastMessage.textContent = msg;
-      DOM.toast.classList.add('show');
-      setTimeout(() => {
-        DOM.toast.classList.remove('show');
-      }, 3500);
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
     }
-
-    // Kickoff on load
-    window.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
 </html>
