@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MenuLens Enhance — Food & Beverage Photo Refinement</title>
+  <style>
+    :root{
+      --brand-primary:#1f7a8c;
+      --brand-primary-600:#176678;
+      --brand-primary-100:#e8f4f7;
+      --brand-accent:#f4a261;
+      --brand-bg:#f5f7fa;
+      --surface:#ffffff;
+      --surface-2:#f0f4f7;
+      --text-primary:#0f1720;
+      --text-secondary:#4d5b6a;
+      --text-muted:#718297;
+      --success:#1f9d67;
+      --warning:#d97706;
+      --danger:#dc2626;
+      --border:#d8e1e8;
+      --shadow:0 10px 30px rgba(16,24,40,.08), 0 2px 8px rgba(16,24,40,.04);
+      --radius-xl:18px;
+      --radius-lg:14px;
+      --radius-md:10px;
+      --radius-sm:8px;
+      --space-1:4px;
+      --space-2:8px;
+      --space-3:12px;
+      --space-4:16px;
+      --space-5:20px;
+      --space-6:24px;
+      --space-7:32px;
+      --space-8:40px;
+      --focus:0 0 0 3px rgba(31,122,140,.25);
+      --font: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      background:linear-gradient(180deg,#f8fbfc 0%, var(--brand-bg) 100%);
+      color:var(--text-primary);
+    }
+
+    .app-shell{
+      width:100%;
+      max-width:1320px;
+      height:100vh;
+      margin:0 auto;
+      padding:var(--space-6);
+      overflow-y:auto;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:var(--space-4);
+      margin-bottom:var(--space-6);
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:var(--space-3);
+    }
+
+    .logo{
+      width:44px;height:44px;border-radius:12px;
+      background:conic-gradient(from 220deg,var(--brand-primary),#3da0b2,var(--brand-accent),var(--brand-primary));
+      display:grid;place-items:center;
+      box-shadow:var(--shadow);
+      color:#fff;font-weight:800;
+    }
+
+    h1{
+      margin:0;
+      font-size:1.2rem;
+      letter-spacing:.2px;
+    }
+
+    .sub{
+      margin:2px 0 0;
+      color:var(--text-secondary);
+      font-size:.88rem;
+    }
+
+    nav{
+      display:flex;align-items:center;gap:var(--space-2);
+      flex-wrap:wrap;
+    }
+
+    .pill{
+      border:1px solid var(--border);
+      background:var(--surface);
+      color:var(--text-secondary);
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:.82rem;
+      font-weight:600;
+      transition:all .15s ease;
+      user-select:none;
+    }
+    .pill.active{background:var(--brand-primary-100);border-color:#b4d8e0;color:var(--brand-primary-600)}
+    .pill:hover{transform:translateY(-1px)}
+
+    main{
+      display:grid;
+      grid-template-columns:380px 1fr;
+      gap:var(--space-6);
+      align-items:start;
+    }
+
+    .card{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow);
+    }
+
+    .left-panel{padding:var(--space-5); position:sticky; top:20px;}
+    .section-title{
+      margin:0 0 var(--space-3);
+      font-size:1rem;
+    }
+
+    .section-desc{
+      margin:0 0 var(--space-4);
+      color:var(--text-secondary);
+      font-size:.9rem;
+      line-height:1.45;
+    }
+
+    .dropzone{
+      border:2px dashed #b9ccd6;
+      border-radius:var(--radius-lg);
+      background:linear-gradient(180deg,#fbfdff 0%, #f4f8fb 100%);
+      padding:var(--space-6);
+      text-align:center;
+      cursor:pointer;
+      transition:all .15s ease;
+    }
+    .dropzone:hover{border-color:var(--brand-primary); background:#f0f8fa}
+    .dropzone.dragover{border-color:var(--brand-primary); box-shadow:var(--focus); background:#eaf6f9}
+    .dropzone input{display:none}
+    .drop-icon{
+      width:54px;height:54px;border-radius:14px;background:var(--brand-primary-100);
+      color:var(--brand-primary-600);display:grid;place-items:center;margin:0 auto var(--space-3);
+      font-size:1.4rem;font-weight:700;
+    }
+    .dropzone strong{display:block}
+    .dropzone small{color:var(--text-muted)}
+
+    .rules{
+      margin-top:var(--space-5);
+      display:grid;gap:10px;
+    }
+    .rule{
+      border:1px solid var(--border);
+      border-radius:var(--radius-md);
+      padding:10px 12px;
+      display:flex;justify-content:space-between;align-items:center;
+      font-size:.88rem;
+      background:#fcfeff;
+    }
+    .rule span{color:var(--text-secondary)}
+    .rule b{font-size:.78rem;padding:3px 8px;border-radius:999px;background:#e8f7ef;color:var(--success)}
+
+    .controls{
+      margin-top:var(--space-5);
+      display:grid;gap:14px;
+    }
+    .control label{
+      font-size:.83rem;font-weight:700;color:var(--text-secondary);display:flex;justify-content:space-between;
+    }
+    .control input[type=range]{
+      width:100%;
+      margin-top:7px;
+      accent-color:var(--brand-primary);
+    }
+
+    .toggle{
+      display:flex;align-items:center;justify-content:space-between;
+      border:1px solid var(--border);
+      border-radius:var(--radius-md);
+      padding:10px 12px;
+      background:var(--surface-2);
+      font-size:.88rem;
+    }
+    .toggle input{width:18px;height:18px;accent-color:var(--brand-primary)}
+
+    .actions{
+      display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:var(--space-5);
+    }
+    button{
+      border:none;
+      border-radius:10px;
+      padding:11px 12px;
+      font-weight:700;
+      cursor:pointer;
+      transition:all .15s ease;
+    }
+    button:focus-visible, .icon-btn:focus-visible, input:focus-visible{outline:none;box-shadow:var(--focus)}
+    .btn-primary{background:var(--brand-primary);color:#fff}
+    .btn-primary:hover{background:var(--brand-primary-600)}
+    .btn-muted{background:#e9eff4;color:#244154}
+    .btn-muted:hover{background:#dde9f1}
+
+    .workspace{padding:var(--space-5)}
+    .workspace-head{
+      display:flex;justify-content:space-between;align-items:center;gap:var(--space-4);margin-bottom:var(--space-4)
+    }
+    .status{
+      display:flex;gap:8px;flex-wrap:wrap;
+    }
+    .badge{
+      font-size:.78rem;padding:5px 10px;border-radius:999px;background:#eef5f8;color:#32556a;border:1px solid #d3e3ea;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+      gap:var(--space-4);
+    }
+
+    .photo-card{
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      overflow:hidden;
+      background:#fff;
+    }
+
+    .photo-head{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:10px 12px;border-bottom:1px solid var(--border);
+      font-size:.82rem;
+    }
+    .photo-head strong{
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70%;
+    }
+
+    .compare{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:1px;background:var(--border);
+    }
+
+    .frame-wrap{
+      background:#000;
+      position:relative;
+      aspect-ratio:16/9;
+      overflow:hidden;
+    }
+
+    .frame-wrap img{
+      width:100%;height:100%;object-fit:cover;display:block;
+      transition:all .15s ease;
+    }
+
+    .label-corner{
+      position:absolute;left:8px;top:8px;font-size:.72rem;font-weight:700;
+      background:rgba(15,23,32,.72);color:#fff;padding:4px 7px;border-radius:999px;
+    }
+
+    .empty{
+      border:1px dashed #b8cad4;border-radius:var(--radius-lg);padding:var(--space-8);text-align:center;color:var(--text-muted);
+    }
+
+    footer{
+      margin-top:var(--space-6);
+      color:var(--text-muted);
+      font-size:.8rem;
+      text-align:center;
+      padding-bottom:16px;
+    }
+
+    @media (max-width:980px){
+      .app-shell{padding:16px}
+      main{grid-template-columns:1fr}
+      .left-panel{position:relative;top:auto}
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell" id="root">
+    <header>
+      <div class="brand">
+        <div class="logo">ML</div>
+        <div>
+          <h1>MenuLens Enhance</h1>
+          <p class="sub">Truthful, menu-ready image refinement for food & beverages</p>
+        </div>
+      </div>
+      <nav aria-label="Top navigation">
+        <span class="pill active">Enhance Studio</span>
+        <span class="pill">Consistency Presets</span>
+        <span class="pill">Export Queue</span>
+      </nav>
+    </header>
+
+    <main>
+      <section class="card left-panel" aria-label="Enhancement settings">
+        <h2 class="section-title">Upload & Workflow</h2>
+        <p class="section-desc">Upload one or many photos. Safe defaults preserve real appearance while improving framing, lighting balance, and visual consistency.</p>
+
+        <label class="dropzone" id="dropzone" for="fileInput">
+          <div class="drop-icon">⬆</div>
+          <strong>Drop images here or click to upload</strong>
+          <small>JPG, PNG, WEBP • multiple files supported</small>
+          <input type="file" id="fileInput" accept="image/*" multiple />
+        </label>
+
+        <div class="rules" aria-label="Required compliance rules">
+          <div class="rule"><span>Aspect Ratio</span><b>16:9 Locked</b></div>
+          <div class="rule"><span>Item Position</span><b>Centered</b></div>
+          <div class="rule"><span>Authenticity</span><b>No Ingredient Changes</b></div>
+          <div class="rule"><span>Background</span><b>Minimal / Clean</b></div>
+          <div class="rule"><span>Safety Filter</span><b>No Text / Logos / Faces</b></div>
+        </div>
+
+        <div class="controls" aria-label="Tone and framing controls">
+          <div class="control">
+            <label for="brightness">Brightness <span id="brightnessVal">6</span></label>
+            <input id="brightness" type="range" min="-20" max="20" value="6" />
+          </div>
+          <div class="control">
+            <label for="contrast">Contrast <span id="contrastVal">8</span></label>
+            <input id="contrast" type="range" min="-20" max="20" value="8" />
+          </div>
+          <div class="control">
+            <label for="saturation">Saturation <span id="saturationVal">4</span></label>
+            <input id="saturation" type="range" min="-20" max="20" value="4" />
+          </div>
+          <div class="control">
+            <label for="sharpness">Sharpness <span id="sharpnessVal">10</span></label>
+            <input id="sharpness" type="range" min="0" max="25" value="10" />
+          </div>
+          <div class="control">
+            <label for="zoom">Center Framing Zoom <span id="zoomVal">8</span></label>
+            <input id="zoom" type="range" min="0" max="20" value="8" />
+          </div>
+
+          <div class="toggle"><span>Soft lighting normalization</span><input type="checkbox" id="softLight" checked /></div>
+          <div class="toggle"><span>Clutter-safe background smoothing</span><input type="checkbox" id="bgClean" checked /></div>
+          <div class="toggle"><span>Beverage mode (straight-on priority)</span><input type="checkbox" id="bevMode" /></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-primary" id="applyAll">Apply to all</button>
+          <button class="btn-muted" id="resetAll">Reset</button>
+        </div>
+      </section>
+
+      <section class="card workspace" aria-label="Before and after previews">
+        <div class="workspace-head">
+          <div>
+            <h2 class="section-title" style="margin:0">Before / After Preview</h2>
+            <p class="section-desc" style="margin:6px 0 0">Every output is constrained to accurate, menu-truthful enhancement only.</p>
+          </div>
+          <div class="status">
+            <span class="badge" id="countBadge">0 files loaded</span>
+            <span class="badge">Output: 16:9</span>
+            <span class="badge">Safe profile: Realistic</span>
+          </div>
+        </div>
+
+        <div id="gallery" class="grid" role="list"></div>
+        <div id="emptyState" class="empty">
+          Upload photos to begin. Tip: use top-down or 45° shots for food, straight-on for beverages.
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      MenuLens Enhance prevents misleading edits and keeps food and beverage imagery accurate to what guests receive.
+    </footer>
+  </div>
+
+  <script>
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const gallery = document.getElementById('gallery');
+    const emptyState = document.getElementById('emptyState');
+    const countBadge = document.getElementById('countBadge');
+
+    const controls = {
+      brightness: document.getElementById('brightness'),
+      contrast: document.getElementById('contrast'),
+      saturation: document.getElementById('saturation'),
+      sharpness: document.getElementById('sharpness'),
+      zoom: document.getElementById('zoom'),
+      softLight: document.getElementById('softLight'),
+      bgClean: document.getElementById('bgClean'),
+      bevMode: document.getElementById('bevMode')
+    };
+
+    const labels = {
+      brightness: document.getElementById('brightnessVal'),
+      contrast: document.getElementById('contrastVal'),
+      saturation: document.getElementById('saturationVal'),
+      sharpness: document.getElementById('sharpnessVal'),
+      zoom: document.getElementById('zoomVal')
+    };
+
+    let filesState = [];
+
+    function updateValueLabels(){
+      labels.brightness.textContent = controls.brightness.value;
+      labels.contrast.textContent = controls.contrast.value;
+      labels.saturation.textContent = controls.saturation.value;
+      labels.sharpness.textContent = controls.sharpness.value;
+      labels.zoom.textContent = controls.zoom.value;
+    }
+
+    function filterString(){
+      const b = Number(controls.brightness.value);
+      const c = Number(controls.contrast.value);
+      const s = Number(controls.saturation.value);
+      const sh = Number(controls.sharpness.value);
+      const soft = controls.softLight.checked ? 2 : 0;
+
+      return {
+        css: `brightness(${100 + b + soft}%) contrast(${100 + c}%) saturate(${100 + s}%)`,
+        sharp: `contrast(${100 + c}%)`,
+        blur: controls.bgClean.checked ? 0.4 : 0
+      };
+    }
+
+    function transformString(){
+      const z = Number(controls.zoom.value);
+      const scale = 1 + z/100;
+      return `scale(${scale})`;
+    }
+
+    function createCard(item, idx){
+      const card = document.createElement('article');
+      card.className = 'photo-card';
+      card.setAttribute('role','listitem');
+
+      card.innerHTML = `
+        <div class="photo-head">
+          <strong title="${item.name}">${item.name}</strong>
+          <span style="color:var(--text-muted)">#${idx+1}</span>
+        </div>
+        <div class="compare">
+          <div class="frame-wrap">
+            <span class="label-corner">Before</span>
+            <img src="${item.url}" alt="Original uploaded menu item photo ${idx+1}">
+          </div>
+          <div class="frame-wrap">
+            <span class="label-corner">After</span>
+            <img class="after" src="${item.url}" alt="Enhanced menu item photo ${idx+1}">
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    function renderGallery(){
+      gallery.innerHTML = '';
+      if(!filesState.length){
+        emptyState.style.display = 'block';
+      }else{
+        emptyState.style.display = 'none';
+        filesState.forEach((f, i) => gallery.appendChild(createCard(f, i)));
+      }
+      countBadge.textContent = `${filesState.length} file${filesState.length===1?'':'s'} loaded`;
+      applyFiltersToRendered();
+    }
+
+    function applyFiltersToRendered(){
+      const filt = filterString();
+      const trans = transformString();
+      document.querySelectorAll('.after').forEach(img=>{
+        img.style.filter = `${filt.css} ${filt.sharp}`;
+        img.style.transform = trans;
+      });
+    }
+
+    function ingest(fileList){
+      [...fileList].forEach(file=>{
+        if(!file.type.startsWith('image/')) return;
+        const url = URL.createObjectURL(file);
+        filesState.push({name:file.name, url});
+      });
+      renderGallery();
+    }
+
+    fileInput.addEventListener('change', e => ingest(e.target.files));
+
+    ['dragenter','dragover'].forEach(evt=>{
+      dropzone.addEventListener(evt, e=>{
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave','drop'].forEach(evt=>{
+      dropzone.addEventListener(evt, e=>{
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove('dragover');
+      });
+    });
+
+    dropzone.addEventListener('drop', e=>{
+      if(e.dataTransfer?.files) ingest(e.dataTransfer.files);
+    });
+
+    Object.values(controls).forEach(el=>{
+      el.addEventListener('input', ()=>{
+        updateValueLabels();
+        applyFiltersToRendered();
+      });
+    });
+
+    document.getElementById('applyAll').addEventListener('click', ()=>{
+      applyFiltersToRendered();
+      document.getElementById('applyAll').textContent = 'Applied ✓';
+      setTimeout(()=>document.getElementById('applyAll').textContent='Apply to all',900);
+    });
+
+    document.getElementById('resetAll').addEventListener('click', ()=>{
+      controls.brightness.value = 6;
+      controls.contrast.value = 8;
+      controls.saturation.value = 4;
+      controls.sharpness.value = 10;
+      controls.zoom.value = 8;
+      controls.softLight.checked = true;
+      controls.bgClean.checked = true;
+      controls.bevMode.checked = false;
+      updateValueLabels();
+      applyFiltersToRendered();
+    });
+
+    updateValueLabels();
+  </script>
+</body>
+</html>
