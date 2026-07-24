@@ -3,542 +3,517 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MenuLens Enhance — Food & Beverage Photo Refinement</title>
+  <title>DashLens — DoorDash Photo Compliance Studio</title>
   <style>
     :root{
-      --brand-primary:#1f7a8c;
-      --brand-primary-600:#176678;
-      --brand-primary-100:#e8f4f7;
-      --brand-accent:#f4a261;
-      --brand-bg:#f5f7fa;
+      --brand-primary:#eb1700;
+      --brand-primary-700:#c91400;
+      --brand-bg:#f7f7f8;
       --surface:#ffffff;
-      --surface-2:#f0f4f7;
-      --text-primary:#0f1720;
-      --text-secondary:#4d5b6a;
-      --text-muted:#718297;
-      --success:#1f9d67;
-      --warning:#d97706;
-      --danger:#dc2626;
-      --border:#d8e1e8;
-      --shadow:0 10px 30px rgba(16,24,40,.08), 0 2px 8px rgba(16,24,40,.04);
-      --radius-xl:18px;
-      --radius-lg:14px;
-      --radius-md:10px;
+      --surface-2:#f2f3f5;
+      --text-primary:#191919;
+      --text-secondary:#60646c;
+      --success:#0a8f5b;
+      --warning:#9a5c00;
+      --danger:#b42318;
+      --border:#e6e7eb;
+      --shadow:0 8px 24px rgba(25,25,25,0.08), 0 2px 6px rgba(25,25,25,0.05);
+      --radius-lg:16px;
+      --radius-md:12px;
       --radius-sm:8px;
-      --space-1:4px;
-      --space-2:8px;
-      --space-3:12px;
-      --space-4:16px;
-      --space-5:20px;
-      --space-6:24px;
-      --space-7:32px;
-      --space-8:40px;
-      --focus:0 0 0 3px rgba(31,122,140,.25);
-      --font: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --focus:0 0 0 3px rgba(235,23,0,0.2);
+      --font:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
     }
-
     *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:var(--font);
-      background:linear-gradient(180deg,#f8fbfc 0%, var(--brand-bg) 100%);
-      color:var(--text-primary);
-    }
-
-    .app-shell{
+    html,body{height:100%;margin:0;font-family:var(--font);background:var(--brand-bg);color:var(--text-primary)}
+    .app{
       width:100%;
-      max-width:1320px;
+      max-width:1200px;
       height:100vh;
       margin:0 auto;
-      padding:var(--space-6);
       overflow-y:auto;
+      display:flex;
+      flex-direction:column;
     }
-
     header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:var(--space-4);
-      margin-bottom:var(--space-6);
+      position:sticky;top:0;z-index:20;
+      background:rgba(255,255,255,.9);backdrop-filter:blur(8px);
+      border-bottom:1px solid var(--border);
     }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:var(--space-3);
-    }
-
-    .logo{
-      width:44px;height:44px;border-radius:12px;
-      background:conic-gradient(from 220deg,var(--brand-primary),#3da0b2,var(--brand-accent),var(--brand-primary));
-      display:grid;place-items:center;
-      box-shadow:var(--shadow);
-      color:#fff;font-weight:800;
-    }
-
-    h1{
-      margin:0;
-      font-size:1.2rem;
-      letter-spacing:.2px;
-    }
-
-    .sub{
-      margin:2px 0 0;
-      color:var(--text-secondary);
-      font-size:.88rem;
-    }
-
-    nav{
-      display:flex;align-items:center;gap:var(--space-2);
-      flex-wrap:wrap;
-    }
-
-    .pill{
-      border:1px solid var(--border);
-      background:var(--surface);
-      color:var(--text-secondary);
-      padding:8px 12px;
-      border-radius:999px;
-      font-size:.82rem;
-      font-weight:600;
-      transition:all .15s ease;
-      user-select:none;
-    }
-    .pill.active{background:var(--brand-primary-100);border-color:#b4d8e0;color:var(--brand-primary-600)}
-    .pill:hover{transform:translateY(-1px)}
-
-    main{
-      display:grid;
-      grid-template-columns:380px 1fr;
-      gap:var(--space-6);
-      align-items:start;
-    }
-
-    .card{
-      background:var(--surface);
-      border:1px solid var(--border);
-      border-radius:var(--radius-xl);
-      box-shadow:var(--shadow);
-    }
-
-    .left-panel{padding:var(--space-5); position:sticky; top:20px;}
-    .section-title{
-      margin:0 0 var(--space-3);
-      font-size:1rem;
-    }
-
-    .section-desc{
-      margin:0 0 var(--space-4);
-      color:var(--text-secondary);
-      font-size:.9rem;
-      line-height:1.45;
-    }
-
-    .dropzone{
-      border:2px dashed #b9ccd6;
-      border-radius:var(--radius-lg);
-      background:linear-gradient(180deg,#fbfdff 0%, #f4f8fb 100%);
-      padding:var(--space-6);
-      text-align:center;
-      cursor:pointer;
-      transition:all .15s ease;
-    }
-    .dropzone:hover{border-color:var(--brand-primary); background:#f0f8fa}
-    .dropzone.dragover{border-color:var(--brand-primary); box-shadow:var(--focus); background:#eaf6f9}
-    .dropzone input{display:none}
-    .drop-icon{
-      width:54px;height:54px;border-radius:14px;background:var(--brand-primary-100);
-      color:var(--brand-primary-600);display:grid;place-items:center;margin:0 auto var(--space-3);
-      font-size:1.4rem;font-weight:700;
-    }
-    .dropzone strong{display:block}
-    .dropzone small{color:var(--text-muted)}
-
-    .rules{
-      margin-top:var(--space-5);
-      display:grid;gap:10px;
-    }
-    .rule{
-      border:1px solid var(--border);
-      border-radius:var(--radius-md);
-      padding:10px 12px;
-      display:flex;justify-content:space-between;align-items:center;
-      font-size:.88rem;
-      background:#fcfeff;
-    }
-    .rule span{color:var(--text-secondary)}
-    .rule b{font-size:.78rem;padding:3px 8px;border-radius:999px;background:#e8f7ef;color:var(--success)}
-
-    .controls{
-      margin-top:var(--space-5);
-      display:grid;gap:14px;
-    }
-    .control label{
-      font-size:.83rem;font-weight:700;color:var(--text-secondary);display:flex;justify-content:space-between;
-    }
-    .control input[type=range]{
-      width:100%;
-      margin-top:7px;
-      accent-color:var(--brand-primary);
-    }
-
-    .toggle{
+    .topbar{
       display:flex;align-items:center;justify-content:space-between;
-      border:1px solid var(--border);
-      border-radius:var(--radius-md);
-      padding:10px 12px;
-      background:var(--surface-2);
-      font-size:.88rem;
+      padding:14px 20px;
     }
-    .toggle input{width:18px;height:18px;accent-color:var(--brand-primary)}
-
-    .actions{
-      display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:var(--space-5);
+    .brand{display:flex;align-items:center;gap:12px;font-weight:700}
+    .logo{
+      width:34px;height:34px;border-radius:10px;
+      background:linear-gradient(135deg,var(--brand-primary),#ff5c4d);
+      position:relative;box-shadow:var(--shadow)
     }
-    button{
-      border:none;
-      border-radius:10px;
-      padding:11px 12px;
-      font-weight:700;
-      cursor:pointer;
-      transition:all .15s ease;
-    }
-    button:focus-visible, .icon-btn:focus-visible, input:focus-visible{outline:none;box-shadow:var(--focus)}
-    .btn-primary{background:var(--brand-primary);color:#fff}
-    .btn-primary:hover{background:var(--brand-primary-600)}
-    .btn-muted{background:#e9eff4;color:#244154}
-    .btn-muted:hover{background:#dde9f1}
-
-    .workspace{padding:var(--space-5)}
-    .workspace-head{
-      display:flex;justify-content:space-between;align-items:center;gap:var(--space-4);margin-bottom:var(--space-4)
-    }
-    .status{
-      display:flex;gap:8px;flex-wrap:wrap;
+    .logo:before{
+      content:"";position:absolute;inset:9px 7px;border:2px solid #fff;border-left:none;border-radius:8px;transform:skewX(-12deg)
     }
     .badge{
-      font-size:.78rem;padding:5px 10px;border-radius:999px;background:#eef5f8;color:#32556a;border:1px solid #d3e3ea;
+      font-size:12px;font-weight:600;padding:6px 10px;border-radius:999px;background:#fff1ef;color:var(--brand-primary);border:1px solid #ffd2cc
     }
-
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-      gap:var(--space-4);
+    nav[aria-label="Progress"]{
+      display:flex;gap:8px;flex-wrap:wrap;padding:0 20px 14px;
     }
-
-    .photo-card{
-      border:1px solid var(--border);
-      border-radius:var(--radius-lg);
-      overflow:hidden;
-      background:#fff;
+    .step-chip{
+      font-size:12px;padding:8px 10px;border-radius:999px;background:var(--surface-2);color:var(--text-secondary);border:1px solid var(--border)
     }
-
-    .photo-head{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:10px 12px;border-bottom:1px solid var(--border);
-      font-size:.82rem;
+    .step-chip.active{background:#ffe7e3;color:var(--brand-primary);border-color:#ffc0b7}
+    main{padding:18px;display:grid;grid-template-columns:340px 1fr;gap:18px;flex:1}
+    .panel{
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow)
     }
-    .photo-head strong{
-      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70%;
+    .panel h2{font-size:17px;margin:0 0 10px}
+    .panel .body{padding:16px}
+    .section-title{font-size:13px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin:2px 0 10px}
+    .mode-toggle{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .mode-card{
+      border:1px solid var(--border);border-radius:var(--radius-md);padding:12px;background:#fff;cursor:pointer;transition:all .15s ease
     }
-
-    .compare{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:1px;background:var(--border);
+    .mode-card:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+    .mode-card.selected{border-color:var(--brand-primary);background:#fff7f5}
+    .mode-card h3{margin:0 0 6px;font-size:14px}
+    .mode-card p{margin:0;color:var(--text-secondary);font-size:12px;line-height:1.35}
+    .field{margin:14px 0}
+    label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+    select,input[type="checkbox"]{accent-color:var(--brand-primary)}
+    select,.btn,.input{
+      width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:14px;background:#fff;color:var(--text-primary);transition:all .15s ease
     }
-
-    .frame-wrap{
-      background:#000;
-      position:relative;
-      aspect-ratio:16/9;
-      overflow:hidden;
+    select:focus,.btn:focus,.input:focus,.dropzone:focus{outline:none;box-shadow:var(--focus);border-color:var(--brand-primary)}
+    .btn{
+      cursor:pointer;background:var(--surface-2);font-weight:600
     }
-
-    .frame-wrap img{
-      width:100%;height:100%;object-fit:cover;display:block;
-      transition:all .15s ease;
+    .btn:hover{filter:brightness(.98)}
+    .btn.primary{background:var(--brand-primary);color:#fff;border-color:var(--brand-primary)}
+    .btn.primary:hover{background:var(--brand-primary-700)}
+    .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .dropzone{
+      border:2px dashed #ffb1a6;border-radius:12px;background:#fff8f7;padding:14px;text-align:center;cursor:pointer;transition:all .15s ease
     }
-
-    .label-corner{
-      position:absolute;left:8px;top:8px;font-size:.72rem;font-weight:700;
-      background:rgba(15,23,32,.72);color:#fff;padding:4px 7px;border-radius:999px;
+    .dropzone:hover{background:#fff2f0}
+    .dropzone p{margin:6px 0 0;color:var(--text-secondary);font-size:12px}
+    .hint{font-size:12px;color:var(--text-secondary)}
+    .rule-box{
+      border:1px solid var(--border);border-radius:12px;padding:12px;background:#fcfcfd;
+      max-height:190px;overflow:auto
     }
-
-    .empty{
-      border:1px dashed #b8cad4;border-radius:var(--radius-lg);padding:var(--space-8);text-align:center;color:var(--text-muted);
+    .rule-box ul{padding-left:18px;margin:8px 0}
+    .rule-box li{margin:6px 0;font-size:12px;line-height:1.35}
+    .req{color:var(--success);font-weight:600}
+    .proh{color:var(--danger);font-weight:600}
+    .workspace{
+      display:grid;grid-template-rows:auto auto 1fr;gap:14px
     }
-
-    footer{
-      margin-top:var(--space-6);
-      color:var(--text-muted);
-      font-size:.8rem;
-      text-align:center;
-      padding-bottom:16px;
+    .status{
+      display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:#fff
     }
-
-    @media (max-width:980px){
-      .app-shell{padding:16px}
+    .dot{width:10px;height:10px;border-radius:999px;background:#a3a8b3}
+    .dot.live{background:var(--success)}
+    .status small{color:var(--text-secondary}
+    .preview-grid{
+      display:grid;grid-template-columns:1fr 1fr;gap:14px
+    }
+    .card{
+      background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden
+    }
+    .card h3{margin:0;padding:10px 12px;border-bottom:1px solid var(--border);font-size:14px}
+    .frame{
+      position:relative;background:#f1f2f4;
+      width:100%;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;overflow:hidden
+    }
+    .frame img{width:100%;height:100%;object-fit:cover}
+    .waterline{
+      position:absolute;left:0;right:0;bottom:0;background:linear-gradient(to top,rgba(25,25,25,.55),rgba(25,25,25,0));color:#fff;padding:10px;font-size:12px
+    }
+    .thumbs{display:flex;gap:10px;overflow:auto;padding:10px;border-top:1px solid var(--border);background:#fafbfc}
+    .thumb{
+      width:78px;height:44px;border-radius:6px;border:2px solid transparent;overflow:hidden;cursor:pointer;transition:all .15s ease;flex:0 0 auto
+    }
+    .thumb.active{border-color:var(--brand-primary)}
+    .thumb img{width:100%;height:100%;object-fit:cover}
+    .preview-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+    .choice{
+      border:1px solid var(--border);border-radius:10px;padding:9px;cursor:pointer;background:#fff;transition:all .15s ease
+    }
+    .choice.selected{border-color:var(--brand-primary);background:#fff2f0}
+    footer{padding:12px 18px;color:var(--text-secondary);font-size:12px}
+    @media (max-width: 960px){
       main{grid-template-columns:1fr}
-      .left-panel{position:relative;top:auto}
+      .preview-grid{grid-template-columns:1fr}
     }
   </style>
 </head>
 <body>
-  <div class="app-shell" id="root">
+  <div class="app">
     <header>
-      <div class="brand">
-        <div class="logo">ML</div>
-        <div>
-          <h1>MenuLens Enhance</h1>
-          <p class="sub">Truthful, menu-ready image refinement for food & beverages</p>
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            <div>DashLens</div>
+            <small style="color:var(--text-secondary)">DoorDash Photo Compliance Studio</small>
+          </div>
         </div>
+        <span class="badge">Internal Tool • v2.4</span>
       </div>
-      <nav aria-label="Top navigation">
-        <span class="pill active">Enhance Studio</span>
-        <span class="pill">Consistency Presets</span>
-        <span class="pill">Export Queue</span>
+      <nav aria-label="Progress">
+        <span class="step-chip active">1) Upload</span>
+        <span class="step-chip active">2) Mode + Rules</span>
+        <span class="step-chip active">3) Preview</span>
+        <span class="step-chip">4) Finalize</span>
       </nav>
     </header>
 
     <main>
-      <section class="card left-panel" aria-label="Enhancement settings">
-        <h2 class="section-title">Upload & Workflow</h2>
-        <p class="section-desc">Upload one or many photos. Safe defaults preserve real appearance while improving framing, lighting balance, and visual consistency.</p>
+      <section class="panel" aria-label="Controls">
+        <div class="body">
+          <h2>Setup</h2>
 
-        <label class="dropzone" id="dropzone" for="fileInput">
-          <div class="drop-icon">⬆</div>
-          <strong>Drop images here or click to upload</strong>
-          <small>JPG, PNG, WEBP • multiple files supported</small>
-          <input type="file" id="fileInput" accept="image/*" multiple />
-        </label>
+          <div class="section-title">Upload</div>
+          <label for="images">Photos</label>
+          <div class="dropzone" tabindex="0" id="dropzone" role="button" aria-controls="images">
+            <strong>Drop files or click to upload</strong>
+            <p>Supports one or multiple food/drink images (JPG, PNG, WEBP)</p>
+          </div>
+          <input id="images" type="file" accept="image/*" multiple style="display:none" />
 
-        <div class="rules" aria-label="Required compliance rules">
-          <div class="rule"><span>Aspect Ratio</span><b>16:9 Locked</b></div>
-          <div class="rule"><span>Item Position</span><b>Centered</b></div>
-          <div class="rule"><span>Authenticity</span><b>No Ingredient Changes</b></div>
-          <div class="rule"><span>Background</span><b>Minimal / Clean</b></div>
-          <div class="rule"><span>Safety Filter</span><b>No Text / Logos / Faces</b></div>
-        </div>
-
-        <div class="controls" aria-label="Tone and framing controls">
-          <div class="control">
-            <label for="brightness">Brightness <span id="brightnessVal">6</span></label>
-            <input id="brightness" type="range" min="-20" max="20" value="6" />
-          </div>
-          <div class="control">
-            <label for="contrast">Contrast <span id="contrastVal">8</span></label>
-            <input id="contrast" type="range" min="-20" max="20" value="8" />
-          </div>
-          <div class="control">
-            <label for="saturation">Saturation <span id="saturationVal">4</span></label>
-            <input id="saturation" type="range" min="-20" max="20" value="4" />
-          </div>
-          <div class="control">
-            <label for="sharpness">Sharpness <span id="sharpnessVal">10</span></label>
-            <input id="sharpness" type="range" min="0" max="25" value="10" />
-          </div>
-          <div class="control">
-            <label for="zoom">Center Framing Zoom <span id="zoomVal">8</span></label>
-            <input id="zoom" type="range" min="0" max="20" value="8" />
+          <div class="field">
+            <div class="section-title">Workflow Mode</div>
+            <div class="mode-toggle" role="radiogroup" aria-label="Mode selection">
+              <button class="mode-card selected" id="foodBtn" aria-pressed="true">
+                <h3>Food Mode</h3>
+                <p>Exact-match replication only. Preserve item as sold.</p>
+              </button>
+              <button class="mode-card" id="drinkBtn" aria-pressed="false">
+                <h3>Drink Mode</h3>
+                <p>Flexible but brand-safe scene styling with realistic effects.</p>
+              </button>
+            </div>
           </div>
 
-          <div class="toggle"><span>Soft lighting normalization</span><input type="checkbox" id="softLight" checked /></div>
-          <div class="toggle"><span>Clutter-safe background smoothing</span><input type="checkbox" id="bgClean" checked /></div>
-          <div class="toggle"><span>Beverage mode (straight-on priority)</span><input type="checkbox" id="bevMode" /></div>
-        </div>
+          <div id="foodOptions">
+            <div class="field">
+              <label for="foodBg">Food Background (numbered menu)</label>
+              <select id="foodBg">
+                <option value="Marble" selected>2. Marble (Default)</option>
+                <option value="Slate">1. Slate</option>
+                <option value="Wood">3. Wood</option>
+                <option value="Gradient Gray">4. Gradient Gray</option>
+                <option value="Matte White">5. Matte White</option>
+                <option value="Keep Original">Keep uploaded background</option>
+              </select>
+            </div>
+          </div>
 
-        <div class="actions">
-          <button class="btn-primary" id="applyAll">Apply to all</button>
-          <button class="btn-muted" id="resetAll">Reset</button>
+          <div id="drinkOptions" style="display:none">
+            <div class="field">
+              <label for="drinkBg">Which background style would you like for this drink scene?</label>
+              <select id="drinkBg">
+                <option value="Professional" selected>Professional (clean & elegant) — Default</option>
+                <option value="Creative/Fun">Creative/Fun (color-coordinated & artistic)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="temperature">Drink Temperature</label>
+              <select id="temperature">
+                <option value="Cold">Cold</option>
+                <option value="Hot">Hot</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="drinkType">Drink Type (for tone adaptation)</label>
+              <select id="drinkType">
+                <option>Generic/Unknown</option>
+                <option>Coke</option>
+                <option>Orange soda</option>
+                <option>Beer</option>
+                <option>Cocktail</option>
+                <option>Coffee / Tea</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label><input type="checkbox" id="compactPreview"> Generate compact preview options before finalizing</label>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn" id="previewBtn">Generate Preview</button>
+            <button class="btn primary" id="finalBtn">Finalize Output</button>
+          </div>
+
+          <div class="field">
+            <div class="section-title">DoorDash Compliance</div>
+            <div class="rule-box" id="rulesBox"></div>
+          </div>
         </div>
       </section>
 
-      <section class="card workspace" aria-label="Before and after previews">
-        <div class="workspace-head">
-          <div>
-            <h2 class="section-title" style="margin:0">Before / After Preview</h2>
-            <p class="section-desc" style="margin:6px 0 0">Every output is constrained to accurate, menu-truthful enhancement only.</p>
+      <section class="workspace" aria-label="Preview Workspace">
+        <div class="status">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span class="dot live" aria-hidden="true"></span>
+            <div>
+              <strong id="statusText">Ready</strong><br>
+              <small id="statusSub">Upload images to begin compliant setup</small>
+            </div>
           </div>
-          <div class="status">
-            <span class="badge" id="countBadge">0 files loaded</span>
-            <span class="badge">Output: 16:9</span>
-            <span class="badge">Safe profile: Realistic</span>
-          </div>
+          <small>Final format: <strong>16:9</strong> • Centered composition • DoorDash-safe</small>
         </div>
 
-        <div id="gallery" class="grid" role="list"></div>
-        <div id="emptyState" class="empty">
-          Upload photos to begin. Tip: use top-down or 45° shots for food, straight-on for beverages.
+        <div class="preview-grid">
+          <article class="card">
+            <h3>Source</h3>
+            <div class="frame" id="sourceFrame">
+              <img id="sourceImg" src="https://picsum.photos/1280/720?food" alt="Uploaded source preview">
+            </div>
+            <div class="thumbs" id="thumbs"></div>
+          </article>
+
+          <article class="card">
+            <h3>Final Preview</h3>
+            <div class="frame" id="finalFrame">
+              <img id="finalImg" src="https://picsum.photos/1280/720?plate" alt="Processed final preview">
+              <div class="waterline" id="overlayMeta">Food Mode • Marble • 16:9 compliant crop</div>
+            </div>
+            <div class="preview-choices" id="choices"></div>
+          </article>
         </div>
+
+        <article class="card">
+          <h3 style="display:flex;justify-content:space-between;align-items:center">
+            <span>Compliance Checklist</span>
+            <span style="font-size:12px;color:var(--text-secondary)">Auto-validated hints</span>
+          </h3>
+          <div style="padding:12px 14px;font-size:13px;line-height:1.45;color:var(--text-secondary)">
+            <div>• Main item centered and clearly identifiable.</div>
+            <div>• No text overlays, people, logos, or unrelated props.</div>
+            <div>• Realistic color and proportions, no misleading edits.</div>
+            <div>• Lighting balanced (studio-soft / natural bright).</div>
+            <div>• Composition fixed to 16:9 and item dominance maintained.</div>
+          </div>
+        </article>
       </section>
     </main>
 
-    <footer>
-      MenuLens Enhance prevents misleading edits and keeps food and beverage imagery accurate to what guests receive.
-    </footer>
+    <footer>DashLens routes account managers through food exact-match and drink style-safe workflows with DoorDash photo policy safeguards.</footer>
   </div>
 
   <script>
+    const foodBtn = document.getElementById('foodBtn');
+    const drinkBtn = document.getElementById('drinkBtn');
+    const foodOptions = document.getElementById('foodOptions');
+    const drinkOptions = document.getElementById('drinkOptions');
+    const rulesBox = document.getElementById('rulesBox');
+    const imagesInput = document.getElementById('images');
     const dropzone = document.getElementById('dropzone');
-    const fileInput = document.getElementById('fileInput');
-    const gallery = document.getElementById('gallery');
-    const emptyState = document.getElementById('emptyState');
-    const countBadge = document.getElementById('countBadge');
+    const sourceImg = document.getElementById('sourceImg');
+    const finalImg = document.getElementById('finalImg');
+    const thumbs = document.getElementById('thumbs');
+    const overlayMeta = document.getElementById('overlayMeta');
+    const statusText = document.getElementById('statusText');
+    const statusSub = document.getElementById('statusSub');
+    const previewBtn = document.getElementById('previewBtn');
+    const finalBtn = document.getElementById('finalBtn');
+    const compactPreview = document.getElementById('compactPreview');
+    const choices = document.getElementById('choices');
 
-    const controls = {
-      brightness: document.getElementById('brightness'),
-      contrast: document.getElementById('contrast'),
-      saturation: document.getElementById('saturation'),
-      sharpness: document.getElementById('sharpness'),
-      zoom: document.getElementById('zoom'),
-      softLight: document.getElementById('softLight'),
-      bgClean: document.getElementById('bgClean'),
-      bevMode: document.getElementById('bevMode')
-    };
+    const foodBg = document.getElementById('foodBg');
+    const drinkBg = document.getElementById('drinkBg');
+    const temperature = document.getElementById('temperature');
+    const drinkType = document.getElementById('drinkType');
 
-    const labels = {
-      brightness: document.getElementById('brightnessVal'),
-      contrast: document.getElementById('contrastVal'),
-      saturation: document.getElementById('saturationVal'),
-      sharpness: document.getElementById('sharpnessVal'),
-      zoom: document.getElementById('zoomVal')
-    };
+    let mode = 'food';
+    let files = [];
+    let currentIndex = 0;
+    let selectedChoice = null;
 
-    let filesState = [];
+    const foodRulesHTML = `
+      <div class="req">Required for Food Mode:</div>
+      <ul>
+        <li>Display DoorDash Photo Compliance Requirements before processing.</li>
+        <li>Exact-match only: preserve ingredients, portions, layout, and packaging exactly.</li>
+        <li>Do not add/remove food items, garnishes, or components.</li>
+        <li>Only minor exposure, brightness, and clarity improvements allowed.</li>
+        <li>Centered, professional composition in <strong>16:9</strong>.</li>
+        <li>Food should occupy about <strong>70–80%</strong> of frame height.</li>
+        <li>Use top-down or 45° framing when appropriate.</li>
+        <li>Never crop essential food components.</li>
+      </ul>
+      <div class="proh">Prohibited:</div>
+      <ul>
+        <li>No people/hands/faces, logos/watermarks, text overlays, or unrelated props.</li>
+        <li>No stylized or misleading edits that imply false advertising.</li>
+      </ul>
+    `;
 
-    function updateValueLabels(){
-      labels.brightness.textContent = controls.brightness.value;
-      labels.contrast.textContent = controls.contrast.value;
-      labels.saturation.textContent = controls.saturation.value;
-      labels.sharpness.textContent = controls.sharpness.value;
-      labels.zoom.textContent = controls.zoom.value;
+    const drinkRulesHTML = `
+      <div class="req">Required for Drink Mode:</div>
+      <ul>
+        <li>Ask: “Which background style would you like for this drink scene?”</li>
+        <li>Default to <strong>Professional</strong> if not specified.</li>
+        <li>Keep drink centered and clearly dominant.</li>
+        <li>For cold drinks: realistic condensation/frost/subtle mist with cool lighting.</li>
+        <li>For hot drinks: warm lighting with realistic presentation.</li>
+        <li>For Creative/Fun: adapt hue to beverage color while staying brand-safe.</li>
+      </ul>
+      <div class="proh">Prohibited:</div>
+      <ul>
+        <li>No props, text, off-brand imagery, cluttered backgrounds, or misleading effects.</li>
+      </ul>
+    `;
+
+    function setMode(next){
+      mode = next;
+      const food = next === 'food';
+      foodBtn.classList.toggle('selected', food);
+      drinkBtn.classList.toggle('selected', !food);
+      foodBtn.setAttribute('aria-pressed', food);
+      drinkBtn.setAttribute('aria-pressed', !food);
+      foodOptions.style.display = food ? 'block' : 'none';
+      drinkOptions.style.display = food ? 'none' : 'block';
+      rulesBox.innerHTML = food ? foodRulesHTML : drinkRulesHTML;
+      updateOverlay();
     }
 
-    function filterString(){
-      const b = Number(controls.brightness.value);
-      const c = Number(controls.contrast.value);
-      const s = Number(controls.saturation.value);
-      const sh = Number(controls.sharpness.value);
-      const soft = controls.softLight.checked ? 2 : 0;
+    foodBtn.addEventListener('click', ()=>setMode('food'));
+    drinkBtn.addEventListener('click', ()=>setMode('drink'));
 
-      return {
-        css: `brightness(${100 + b + soft}%) contrast(${100 + c}%) saturate(${100 + s}%)`,
-        sharp: `contrast(${100 + c}%)`,
-        blur: controls.bgClean.checked ? 0.4 : 0
-      };
-    }
-
-    function transformString(){
-      const z = Number(controls.zoom.value);
-      const scale = 1 + z/100;
-      return `scale(${scale})`;
-    }
-
-    function createCard(item, idx){
-      const card = document.createElement('article');
-      card.className = 'photo-card';
-      card.setAttribute('role','listitem');
-
-      card.innerHTML = `
-        <div class="photo-head">
-          <strong title="${item.name}">${item.name}</strong>
-          <span style="color:var(--text-muted)">#${idx+1}</span>
-        </div>
-        <div class="compare">
-          <div class="frame-wrap">
-            <span class="label-corner">Before</span>
-            <img src="${item.url}" alt="Original uploaded menu item photo ${idx+1}">
-          </div>
-          <div class="frame-wrap">
-            <span class="label-corner">After</span>
-            <img class="after" src="${item.url}" alt="Enhanced menu item photo ${idx+1}">
-          </div>
-        </div>
-      `;
-      return card;
-    }
-
-    function renderGallery(){
-      gallery.innerHTML = '';
-      if(!filesState.length){
-        emptyState.style.display = 'block';
-      }else{
-        emptyState.style.display = 'none';
-        filesState.forEach((f, i) => gallery.appendChild(createCard(f, i)));
-      }
-      countBadge.textContent = `${filesState.length} file${filesState.length===1?'':'s'} loaded`;
-      applyFiltersToRendered();
-    }
-
-    function applyFiltersToRendered(){
-      const filt = filterString();
-      const trans = transformString();
-      document.querySelectorAll('.after').forEach(img=>{
-        img.style.filter = `${filt.css} ${filt.sharp}`;
-        img.style.transform = trans;
-      });
-    }
-
-    function ingest(fileList){
-      [...fileList].forEach(file=>{
-        if(!file.type.startsWith('image/')) return;
-        const url = URL.createObjectURL(file);
-        filesState.push({name:file.name, url});
-      });
-      renderGallery();
-    }
-
-    fileInput.addEventListener('change', e => ingest(e.target.files));
+    dropzone.addEventListener('click', ()=>imagesInput.click());
+    dropzone.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' ') imagesInput.click(); });
 
     ['dragenter','dragover'].forEach(evt=>{
-      dropzone.addEventListener(evt, e=>{
-        e.preventDefault();
-        e.stopPropagation();
-        dropzone.classList.add('dragover');
-      });
+      dropzone.addEventListener(evt, e=>{ e.preventDefault(); dropzone.style.borderColor = '#eb1700'; });
     });
-
     ['dragleave','drop'].forEach(evt=>{
-      dropzone.addEventListener(evt, e=>{
-        e.preventDefault();
-        e.stopPropagation();
-        dropzone.classList.remove('dragover');
-      });
+      dropzone.addEventListener(evt, e=>{ e.preventDefault(); dropzone.style.borderColor = '#ffb1a6'; });
     });
-
     dropzone.addEventListener('drop', e=>{
-      if(e.dataTransfer?.files) ingest(e.dataTransfer.files);
+      files = [...e.dataTransfer.files].filter(f=>f.type.startsWith('image/'));
+      loadFiles();
+    });
+    imagesInput.addEventListener('change', e=>{
+      files = [...e.target.files];
+      loadFiles();
     });
 
-    Object.values(controls).forEach(el=>{
-      el.addEventListener('input', ()=>{
-        updateValueLabels();
-        applyFiltersToRendered();
+    function loadFiles(){
+      if(!files.length) return;
+      thumbs.innerHTML = '';
+      currentIndex = 0;
+      files.forEach((file, idx)=>{
+        const reader = new FileReader();
+        reader.onload = () => {
+          const btn = document.createElement('button');
+          btn.className = 'thumb' + (idx===0?' active':'');
+          btn.innerHTML = `<img src="${reader.result}" alt="Thumbnail ${idx+1}">`;
+          btn.addEventListener('click', ()=>{
+            document.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active'));
+            btn.classList.add('active');
+            currentIndex = idx;
+            sourceImg.src = reader.result;
+            renderFinal(reader.result);
+          });
+          thumbs.appendChild(btn);
+          if(idx===0){
+            sourceImg.src = reader.result;
+            renderFinal(reader.result);
+          }
+        };
+        reader.readAsDataURL(file);
       });
+      statusText.textContent = `${files.length} image${files.length>1?'s':''} loaded`;
+      statusSub.textContent = 'Choose mode and generate compliant preview.';
+    }
+
+    function backgroundHint(){
+      if(mode==='food') return foodBg.value || 'Marble';
+      return `${drinkBg.value || 'Professional'} • ${temperature.value} • ${drinkType.value}`;
+    }
+
+    function renderFinal(src){
+      finalImg.src = src;
+      const frame = document.getElementById('finalFrame');
+      frame.style.filter = mode==='food' ? 'contrast(1.03) brightness(1.03) saturate(1.02)' : 'contrast(1.04) saturate(1.04)';
+      if(mode==='drink' && temperature.value==='Cold'){
+        frame.style.boxShadow = 'inset 0 0 90px rgba(155,205,255,.18)';
+      } else if(mode==='drink' && temperature.value==='Hot'){
+        frame.style.boxShadow = 'inset 0 0 90px rgba(255,190,130,.18)';
+      } else {
+        frame.style.boxShadow = 'none';
+      }
+      updateOverlay();
+    }
+
+    function updateOverlay(){
+      if(mode==='food'){
+        overlayMeta.textContent = `Food Mode • ${foodBg.value || 'Marble'} • Exact-match • 16:9 compliant`;
+      } else {
+        overlayMeta.textContent = `Drink Mode • ${drinkBg.value || 'Professional'} • ${temperature.value} • 16:9 compliant`;
+      }
+    }
+
+    [foodBg, drinkBg, temperature, drinkType].forEach(el=>el.addEventListener('change', ()=>{
+      if(sourceImg.src) renderFinal(sourceImg.src);
+    }));
+
+    previewBtn.addEventListener('click', ()=>{
+      if(!files.length){
+        statusText.textContent = 'No images uploaded';
+        statusSub.textContent = 'Upload at least one image to generate preview.';
+        return;
+      }
+      choices.innerHTML = '';
+      selectedChoice = null;
+
+      if(compactPreview.checked && mode==='drink'){
+        ['Professional','Creative/Fun'].forEach(opt=>{
+          const c = document.createElement('button');
+          c.className='choice';
+          c.innerHTML = `<strong>${opt}</strong><div style="font-size:12px;color:var(--text-secondary);margin-top:4px">${opt==='Professional'?'Clean, menu-ready, elegant neutrals':'Vibrant, beverage-coordinated hues (brand-safe)'}</div>`;
+          c.addEventListener('click', ()=>{
+            document.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected'));
+            c.classList.add('selected');
+            selectedChoice = opt;
+            drinkBg.value = opt;
+            updateOverlay();
+          });
+          choices.appendChild(c);
+        });
+        statusText.textContent = 'Preview options ready';
+        statusSub.textContent = 'Select a drink style, then finalize rendering.';
+      } else {
+        const c = document.createElement('div');
+        c.className='choice selected';
+        c.innerHTML = `<strong>${mode==='food'?'Food Exact-Match Preview':'Drink Scene Preview'}</strong><div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Using current settings: ${backgroundHint()}</div>`;
+        choices.appendChild(c);
+        statusText.textContent = 'Preview generated';
+        statusSub.textContent = 'Ready for finalization.';
+      }
     });
 
-    document.getElementById('applyAll').addEventListener('click', ()=>{
-      applyFiltersToRendered();
-      document.getElementById('applyAll').textContent = 'Applied ✓';
-      setTimeout(()=>document.getElementById('applyAll').textContent='Apply to all',900);
+    finalBtn.addEventListener('click', ()=>{
+      if(!files.length){
+        statusText.textContent = 'Upload required';
+        statusSub.textContent = 'Please upload one or more images first.';
+        return;
+      }
+      if(mode==='drink' && compactPreview.checked && !selectedChoice){
+        statusText.textContent = 'Confirmation needed';
+        statusSub.textContent = 'Please choose Professional or Creative/Fun preview before final rendering.';
+        return;
+      }
+      statusText.textContent = 'Final output ready';
+      statusSub.textContent = `Rendered ${files.length} image${files.length>1?'s':''} with ${mode==='food'?'exact-match food':'drink'} workflow.`;
+      document.querySelectorAll('.step-chip')[3].classList.add('active');
     });
 
-    document.getElementById('resetAll').addEventListener('click', ()=>{
-      controls.brightness.value = 6;
-      controls.contrast.value = 8;
-      controls.saturation.value = 4;
-      controls.sharpness.value = 10;
-      controls.zoom.value = 8;
-      controls.softLight.checked = true;
-      controls.bgClean.checked = true;
-      controls.bevMode.checked = false;
-      updateValueLabels();
-      applyFiltersToRendered();
-    });
-
-    updateValueLabels();
+    setMode('food');
   </script>
 </body>
 </html>
